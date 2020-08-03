@@ -13,9 +13,8 @@ using System.Windows.Forms;
 using Newtonsoft.Json;
 using System.Security.Permissions;
 using System.Diagnostics;
-using SocketIOClient;
-using Quobject.EngineIoClientDotNet.Client;
 using System.Drawing.Text;
+using SocketIOClient;
 
 namespace Blaseball_Livestream
 {
@@ -33,7 +32,11 @@ namespace Blaseball_Livestream
             formClient = new Client();
             System.Threading.Thread.Sleep(1000);
             List<Team> allTeams = await formClient.GetAllTeams();
-            while (allTeams == null) { System.Threading.Thread.Sleep(3000); }
+            while (allTeams == null) 
+            { 
+                System.Threading.Thread.Sleep(1000);
+                allTeams = await formClient.GetAllTeams();
+            }
             allTeams.Sort();
             foreach(Team t in allTeams)
             {
@@ -46,21 +49,42 @@ namespace Blaseball_Livestream
 
         }
 
-        private void debugButton_Click(object sender, EventArgs e)
+        private async void mainButtonLeft_Click(object sender, EventArgs e)
         {
+            liveGameTable.Visible = false;
+            Game pastGame = null;
             Team selected = listBox1.SelectedItem as Team;
+            List<Game> games = await formClient.GetSingleGamesUpdate();
+            foreach(Game game in games)
+            {
+                if(selected.fullName == game.awayTeamName || selected.fullName == game.homeTeamName)
+                {
+                    pastGame = game;
+                }
+            }
+            if(pastGame == null) { Debug.WriteLine("Game from that team not found!"); return; } //logs an error and halts routine
+            if (!pastGame.gameComplete) { Debug.WriteLine("Game not over!"); return; } //same as above
+            pastGameTable.Visible = true;
+            pastGameAway.Text = pastGame.awayTeamNickname;
+            pastGameHome.Text = pastGame.homeTeamNickname;
+            pastAwayScore.Text = pastGame.awayScore.ToString();
+            pastHomeScore.Text = pastGame.homeScore.ToString();
+        }
+
+        private void mainButtonR_Click(object sender, EventArgs e)
+        {
+            pastGameTable.Visible = false;
         }
     }
     class Client
     {
         static HttpClient webClient = new HttpClient();
 
-        public async void OpenSocket()
-        {
+        static Uri uri = new Uri("https://blaseball.com");
 
-        }
+        static SocketIO socket = new SocketIO(uri);
 
-        public async Task<Team> GetTeamFromName(string searchName)
+        public async Task<Team> GetTeamFromName(string searchName) //returns a Team object from a short or long team name string
         {
             HttpResponseMessage response = await webClient.GetAsync("https://blaseball.com/database/allTeams");
             //Debug.WriteLine(await response.Content.ReadAsStringAsync());
@@ -82,7 +106,7 @@ namespace Blaseball_Livestream
             return null;
         }
 
-        public async Task<List<Team>> GetAllTeams()
+        public async Task<List<Team>> GetAllTeams() //returns a list of all teams
         {
             HttpResponseMessage response = await webClient.GetAsync("https://blaseball.com/database/allTeams");
             if (response.IsSuccessStatusCode)
@@ -90,6 +114,21 @@ namespace Blaseball_Livestream
                 return JsonConvert.DeserializeObject<List<Team>>(await response.Content.ReadAsStringAsync());
             }
             return null;
+        }
+
+        public async Task<List<Game>> GetSingleGamesUpdate() //returns a single list of Games
+        {
+            List<ServerData> serverDataList = null;
+            socket.On("gameDataUpdate", async (data) =>
+            {
+                serverDataList = JsonConvert.DeserializeObject<List<ServerData>>(data.ToString());
+                Debug.WriteLine(serverDataList[0]);
+                await socket.DisconnectAsync();
+            });
+            
+            await socket.ConnectAsync();
+            while(serverDataList == null) { System.Threading.Thread.Sleep(100); }
+            return serverDataList[0].schedule;
         }
     }
 
@@ -99,24 +138,40 @@ namespace Blaseball_Livestream
         public string fullName { get; set; }
         public string nickname { get; set; }
         public string mainColor { get; set; }
+        public string slogan { get; set; }
+        public string shorthand { get; set; }
         public int CompareTo(Team other)
         {
             return nickname.CompareTo(other.nickname);
         }
         public override string ToString()
         {
-            return nickname;
+            return String.Concat(new String[3] { fullName, " - ", slogan });
         }
     }
 
     public class Game
     {
         public string id { get; set; }
-        public Team awayTeam { get; set; }
-        public Team homeTeam { get; set; }
+        public string awayTeamName { get; set; }
+        public string awayTeamNickname { get; set; }
+        public string awayTeam { get; set; }
+        public string homeTeamName { get; set; }
+        public string homeTeamNickname { get; set; }
+        public string homeTeam { get; set; }
         public List<Inning> innings { get; set; }
+        public int awayScore { get; set; }
+        public int homeScore { get; set; }
+        public string lastUpdate { get; set; }
+        public bool gameComplete { get; set; }
+        public int inning { get; set; }
+        public bool topOfInning { get; set; }
     }
 
+    public class ServerData
+    {
+        public List<Game> schedule { get; set; }
+    }
     public class Inning:IComparable<Inning>
     {
         public int number { get; set; }

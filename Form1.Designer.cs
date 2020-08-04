@@ -77,6 +77,7 @@
             this.pastAwayScore = new System.Windows.Forms.Label();
             this.pastGameAway = new System.Windows.Forms.Label();
             this.pastGameHome = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
             this.liveGameTable.SuspendLayout();
             this.panel1.SuspendLayout();
             this.pastGameTable.SuspendLayout();
@@ -632,6 +633,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.button1);
             this.panel1.Controls.Add(this.mainButtonLeft);
             this.panel1.Controls.Add(this.mainButtonR);
             this.panel1.Location = new System.Drawing.Point(687, 65);
@@ -705,6 +707,17 @@
             this.pastGameHome.TabIndex = 1;
             this.pastGameHome.Text = "Home";
             // 
+            // button1
+            // 
+            this.button1.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.button1.Location = new System.Drawing.Point(0, 74);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(165, 23);
+            this.button1.TabIndex = 4;
+            this.button1.Text = "Start Recording Games...";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -777,6 +790,7 @@
         private System.Windows.Forms.Label topH;
         private System.Windows.Forms.Label botH;
         private System.Windows.Forms.Label liveGameTitle;
+        private System.Windows.Forms.Button button1;
     }
 }
 

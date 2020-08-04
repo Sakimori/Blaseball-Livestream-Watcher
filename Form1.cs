@@ -15,12 +15,18 @@ using System.Diagnostics;
 using System.Drawing.Text;
 using SocketIOClient;
 using System.Threading.Tasks;
+using System.IO;
+using System.Threading;
 
 namespace Blaseball_Livestream
 {
     public partial class Form1 : Form
     {
         Client formClient;
+
+        AutoResetEvent waitHandle = new AutoResetEvent(false);
+
+        List<SaveGame> currentWatchedGames = null;
 
         //TaskCompletionSource<bool> taskCompletionSource = null;
 
@@ -309,9 +315,149 @@ namespace Blaseball_Livestream
             return this.Controls.Find(string.Concat(front, inning.ToString()), true).FirstOrDefault() as Label;
         }
 
-        private void SaveGameToFile(SaveGame game)
+        private void SaveGameToFile(SaveGame saveGame)
         {
 
+        }
+
+        private void UpdateWatchedGame(List<SaveGame> games, Game gameUpdate)
+        {
+            SaveGame thisGame = null;
+            SaveGame newGame = new SaveGame();
+            foreach (SaveGame game in games)
+            {
+                if(game._id == gameUpdate._id)
+                {
+                    thisGame = game;
+                }
+            }
+
+            if(thisGame == null) //if game not found, initialize with same ID
+            {
+                newGame._id = gameUpdate._id;
+                newGame.inningsList = new List<Inning>();
+                newGame.inningsList.Add(new Inning());
+                newGame.inningsList[0].number = gameUpdate.inning + 1;
+                newGame.homeTeamNickname = gameUpdate.homeTeamNickname;
+                newGame.awayTeamNickname = gameUpdate.awayTeamNickname;
+                games.Add(newGame);
+                Debug.WriteLine(string.Concat("Adding game: ", newGame.awayTeamNickname));
+                Debug.WriteLine(games.Count.ToString());
+                thisGame = newGame;
+            }
+
+            if(thisGame.lastUpdate == gameUpdate.lastUpdate) { Debug.WriteLine("No change"); return; } //Leave, nothing to do
+
+            Inning thisInning;
+            thisGame.inningsList.Sort();
+            thisInning = thisGame.inningsList.Last();
+
+            if (thisGame.topOfInning != gameUpdate.topOfInning)
+            {
+                if (gameUpdate.topOfInning)
+                {
+                    thisInning = new Inning();
+                    thisInning.number = gameUpdate.inning + 1;
+
+                    thisGame.inningsList.Add(thisInning);
+                }
+            }
+
+            //check for hits, add to game total
+            foreach(string hitPhrase in hitPhrases)
+            {
+                if (gameUpdate.lastUpdate.Contains(hitPhrase))
+                {
+                    if (gameUpdate.topOfInning) { thisGame.awayHits += 1; }
+                    else thisGame.homeHits += 1;
+                }
+            }
+
+            //check for runs, add to game and inning total
+            int homeScoreDiff = gameUpdate.homeScore - thisGame.homeScore;
+            int awayScoreDiff = gameUpdate.awayScore - thisGame.awayScore;
+            if (homeScoreDiff > 0)
+            {
+                thisGame.homeScore = gameUpdate.homeScore;
+                thisInning.homeScore += awayScoreDiff;
+            }
+            else if (awayScoreDiff > 0)
+            {
+                thisGame.awayScore = gameUpdate.awayScore;
+                thisInning.awayScore += awayScoreDiff;
+            }
+
+            thisGame.topOfInning = gameUpdate.topOfInning;
+            thisGame.lastUpdate = gameUpdate.lastUpdate;
+        }
+        private async void SaveAllGamesToFile(SaveFileDialog fileDialog)
+        {
+            Uri uri = new Uri("https://blaseball.com");
+
+            SocketIO socket = new SocketIO(uri);
+
+            bool roundStarted = false;
+            bool allCompleted = false;
+            currentWatchedGames = new List<SaveGame>();
+
+            socket.On("gameDataUpdate", (data) =>
+            {
+                List<ServerData> serverDataList = JsonConvert.DeserializeObject<List<ServerData>>(data.ToString());
+                List<Game> games = serverDataList[0].schedule;
+
+                bool activeGame = !roundStarted;
+                foreach (Game game in serverDataList[0].schedule)
+                {                   
+                    if (!game.gameComplete && !roundStarted) { roundStarted = true; } //mark round as started, start watching for all games completed
+                    if (roundStarted && !activeGame) { activeGame = !game.gameComplete; } //if round has started and no active game found yet, set flag if this game is active
+                    if(!game.gameComplete) //if this game is currently active
+                    {
+                        UpdateWatchedGame(currentWatchedGames, game);
+                    }
+                }
+                allCompleted = !activeGame;
+                if(currentWatchedGames.Count >= 1) { Debug.WriteLine(currentWatchedGames[0].homeTeamNickname); }
+                if (allCompleted) { waitHandle.Set(); }
+
+
+            });
+
+            await socket.ConnectAsync();
+
+            waitHandle.WaitOne();
+
+            JsonSerializer serializer = new JsonSerializer(); 
+
+            using (Stream fileStreamBytes =
+                fileDialog.OpenFile())
+            {
+                using (StreamWriter fileStream =
+                    new StreamWriter(fileStreamBytes))
+                {
+                    serializer.Serialize(fileStream, currentWatchedGames);
+                }
+            }
+            
+            MessageBox.Show("All games completed!");
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Thread t = new Thread(StartWatching);
+            t.SetApartmentState(ApartmentState.STA);
+            t.Start();
+        }
+
+        private void StartWatching()
+        {
+            SaveFileDialog fileDialog = new SaveFileDialog();
+            fileDialog.Title = "Save New File";
+            fileDialog.DefaultExt = "json";
+            fileDialog.OverwritePrompt = true;
+            fileDialog.AddExtension = true;
+            fileDialog.ShowDialog();
+
+            SaveAllGamesToFile(fileDialog);
         }
     }
     class Client

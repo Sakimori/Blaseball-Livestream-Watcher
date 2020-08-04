@@ -152,7 +152,7 @@ namespace Blaseball_Livestream
             liveGameAwayName.Text = gameArg.awayTeamNickname;
             liveGameHomeName.Text = gameArg.homeTeamNickname;
             int shift = 0;
-            if (gameArg.inning >= 9 ) { SlideInnings(gameArg.inning - 8); shift = gameArg.inning - 8; } //makes space for extra innings
+            if (gameArg.inning >= 9 ) { SlideInnings(gameArg.inning); shift = gameArg.inning - 8; } //makes space for extra innings
             topR.Text = gameArg.awayScore.ToString();
             botR.Text = gameArg.homeScore.ToString();
             Label initScore = InningToLabel(gameArg.inning - shift, true);
@@ -167,6 +167,7 @@ namespace Blaseball_Livestream
             //await socket.DisconnectAsync();
         }
 
+        //Threadsafe text setting for labels
         delegate void SetTextCallback(string text, Label label);
 
         private void SetText(string text, Label label)
@@ -189,6 +190,8 @@ namespace Blaseball_Livestream
             SetText(string.Concat(titleList), liveGameTitle);
         }
 
+
+        //Threadsafe visibility setting for labesl
         delegate void SetVisCallback(bool vis, Label label);
 
         private void SetVis(bool vis, Label label)
@@ -207,7 +210,7 @@ namespace Blaseball_Livestream
         private void UpdateGame(Game oldState, Game newState)
         {
             int shift = 0;
-            if(newState.inning >= 9 && newState.inning - oldState.inning > 0) { SlideInnings(newState.inning - oldState.inning); shift = newState.inning - 8; } //makes space for extra innings
+            if(newState.inning >= 9 && newState.inning != oldState.inning) { SlideInnings(newState.inning); shift = newState.inning - 8; } //changes inning 9 to latest inning
 
 
 
@@ -232,7 +235,7 @@ namespace Blaseball_Livestream
             {
                 SetText(newState.homeScore.ToString(), botR);
                 //botR.Text = newState.homeScore.ToString();
-                Label halfInningLabel = InningToLabel(newState.inning, false);
+                Label halfInningLabel = InningToLabel(newState.inning - shift, false);
                 SetVis(true, halfInningLabel);
                 //halfInningLabel.Visible = true;
                 SetText((Convert.ToInt16(halfInningLabel.Text)+newState.homeScore-oldState.homeScore).ToString(), halfInningLabel);
@@ -241,13 +244,13 @@ namespace Blaseball_Livestream
             {
                 SetText(newState.awayScore.ToString(), topR);
                 //topR.Text = newState.awayScore.ToString();
-                Label halfInningLabel = InningToLabel(newState.inning, true);
+                Label halfInningLabel = InningToLabel(newState.inning - shift, true);
                 SetVis(true, halfInningLabel);
                 SetText((Convert.ToInt16(halfInningLabel.Text) + newState.awayScore - oldState.awayScore).ToString(), halfInningLabel);
             }
 
             //Display zero if inning changeover with no runs
-            if(newState.topOfInning != oldState.topOfInning)
+            if(newState.topOfInning != oldState.topOfInning && shift == 0)
             {
                 int inning = newState.inning;
                 if (newState.topOfInning) { inning -= 1; }
@@ -255,11 +258,22 @@ namespace Blaseball_Livestream
                 SetTitle(newState.topOfInning, newState.inning);
                 SetVis(true, labelCheck);
             }
+
+            //Change title and add zeros for end of game
+            if (newState.gameComplete)
+            {
+                SetText("Final", liveGameTitle);
+                SetVis(true, InningToLabel(9, true));
+                SetVis(true, InningToLabel(9, false));
+            }
         }
 
         private void SlideInnings(int extraInnings) //makes space for extra innings
         {
-            
+            Label[] labels = { InningToLabel(8, true), InningToLabel(8, false), label9 };
+            SetText("0", labels[0]);
+            SetText("0", labels[1]);
+            SetText(extraInnings.ToString(), labels[2]);
         }
 
         private Label InningToLabel(int inning, bool topOfInning)

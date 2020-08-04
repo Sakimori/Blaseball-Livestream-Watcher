@@ -32,6 +32,8 @@
             this.mainButtonLeft = new System.Windows.Forms.Button();
             this.mainButtonR = new System.Windows.Forms.Button();
             this.liveGameTable = new System.Windows.Forms.TableLayoutPanel();
+            this.liveGameTitle = new System.Windows.Forms.Label();
+            this.liveGameAwayName = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -46,13 +48,6 @@
             this.labelE = new System.Windows.Forms.Label();
             this.errorTop = new System.Windows.Forms.Label();
             this.errorBot = new System.Windows.Forms.Label();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.pastGameTable = new System.Windows.Forms.TableLayoutPanel();
-            this.pastGameAway = new System.Windows.Forms.Label();
-            this.pastGameHome = new System.Windows.Forms.Label();
-            this.pastAwayScore = new System.Windows.Forms.Label();
-            this.pastHomeScore = new System.Windows.Forms.Label();
-            this.liveGameAwayName = new System.Windows.Forms.Label();
             this.liveGameHomeName = new System.Windows.Forms.Label();
             this.top1 = new System.Windows.Forms.Label();
             this.top2 = new System.Windows.Forms.Label();
@@ -76,7 +71,12 @@
             this.botR = new System.Windows.Forms.Label();
             this.topH = new System.Windows.Forms.Label();
             this.botH = new System.Windows.Forms.Label();
-            this.liveGameTitle = new System.Windows.Forms.Label();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.pastGameTable = new System.Windows.Forms.TableLayoutPanel();
+            this.pastHomeScore = new System.Windows.Forms.Label();
+            this.pastAwayScore = new System.Windows.Forms.Label();
+            this.pastGameAway = new System.Windows.Forms.Label();
+            this.pastGameHome = new System.Windows.Forms.Label();
             this.liveGameTable.SuspendLayout();
             this.panel1.SuspendLayout();
             this.pastGameTable.SuspendLayout();
@@ -100,7 +100,7 @@
             this.mainButtonLeft.Name = "mainButtonLeft";
             this.mainButtonLeft.Size = new System.Drawing.Size(165, 23);
             this.mainButtonLeft.TabIndex = 1;
-            this.mainButtonLeft.Text = "Load Last Game";
+            this.mainButtonLeft.Text = "Load Past Game";
             this.mainButtonLeft.UseVisualStyleBackColor = true;
             this.mainButtonLeft.Click += new System.EventHandler(this.mainButtonLeft_Click);
             // 
@@ -182,6 +182,28 @@
             this.liveGameTable.Size = new System.Drawing.Size(776, 206);
             this.liveGameTable.TabIndex = 4;
             this.liveGameTable.Visible = false;
+            // 
+            // liveGameTitle
+            // 
+            this.liveGameTitle.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.liveGameTitle.AutoSize = true;
+            this.liveGameTitle.Font = new System.Drawing.Font("Ink Free", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.liveGameTitle.Location = new System.Drawing.Point(41, 18);
+            this.liveGameTitle.Name = "liveGameTitle";
+            this.liveGameTitle.Size = new System.Drawing.Size(124, 20);
+            this.liveGameTitle.TabIndex = 37;
+            this.liveGameTitle.Text = "Top of the 1st";
+            // 
+            // liveGameAwayName
+            // 
+            this.liveGameAwayName.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.liveGameAwayName.AutoSize = true;
+            this.liveGameAwayName.Font = new System.Drawing.Font("Ink Free", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.liveGameAwayName.Location = new System.Drawing.Point(60, 74);
+            this.liveGameAwayName.Name = "liveGameAwayName";
+            this.liveGameAwayName.Size = new System.Drawing.Size(85, 36);
+            this.liveGameAwayName.TabIndex = 4;
+            this.liveGameAwayName.Text = "Away";
             // 
             // label1
             // 
@@ -336,92 +358,6 @@
             this.errorBot.Size = new System.Drawing.Size(33, 20);
             this.errorBot.TabIndex = 13;
             this.errorBot.Text = "NO";
-            // 
-            // panel1
-            // 
-            this.panel1.Controls.Add(this.mainButtonLeft);
-            this.panel1.Controls.Add(this.mainButtonR);
-            this.panel1.Location = new System.Drawing.Point(687, 65);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(347, 100);
-            this.panel1.TabIndex = 5;
-            // 
-            // pastGameTable
-            // 
-            this.pastGameTable.BackColor = System.Drawing.SystemColors.ControlLight;
-            this.pastGameTable.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.InsetDouble;
-            this.pastGameTable.ColumnCount = 2;
-            this.pastGameTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 83.05489F));
-            this.pastGameTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 16.94511F));
-            this.pastGameTable.Controls.Add(this.pastHomeScore, 1, 1);
-            this.pastGameTable.Controls.Add(this.pastAwayScore, 1, 0);
-            this.pastGameTable.Controls.Add(this.pastGameAway, 0, 0);
-            this.pastGameTable.Controls.Add(this.pastGameHome, 0, 1);
-            this.pastGameTable.Cursor = System.Windows.Forms.Cursors.Cross;
-            this.pastGameTable.Location = new System.Drawing.Point(12, 231);
-            this.pastGameTable.Name = "pastGameTable";
-            this.pastGameTable.RowCount = 2;
-            this.pastGameTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.pastGameTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.pastGameTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.pastGameTable.Size = new System.Drawing.Size(422, 206);
-            this.pastGameTable.TabIndex = 6;
-            this.pastGameTable.Visible = false;
-            // 
-            // pastGameAway
-            // 
-            this.pastGameAway.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.pastGameAway.AutoSize = true;
-            this.pastGameAway.Font = new System.Drawing.Font("Ink Free", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.pastGameAway.Location = new System.Drawing.Point(132, 34);
-            this.pastGameAway.Name = "pastGameAway";
-            this.pastGameAway.Size = new System.Drawing.Size(85, 36);
-            this.pastGameAway.TabIndex = 0;
-            this.pastGameAway.Text = "Away";
-            // 
-            // pastGameHome
-            // 
-            this.pastGameHome.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.pastGameHome.AutoSize = true;
-            this.pastGameHome.Font = new System.Drawing.Font("Ink Free", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.pastGameHome.Location = new System.Drawing.Point(131, 135);
-            this.pastGameHome.Name = "pastGameHome";
-            this.pastGameHome.Size = new System.Drawing.Size(86, 36);
-            this.pastGameHome.TabIndex = 1;
-            this.pastGameHome.Text = "Home";
-            // 
-            // pastAwayScore
-            // 
-            this.pastAwayScore.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.pastAwayScore.AutoSize = true;
-            this.pastAwayScore.Font = new System.Drawing.Font("Ink Free", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.pastAwayScore.Location = new System.Drawing.Point(368, 34);
-            this.pastAwayScore.Name = "pastAwayScore";
-            this.pastAwayScore.Size = new System.Drawing.Size(32, 36);
-            this.pastAwayScore.TabIndex = 2;
-            this.pastAwayScore.Text = "0";
-            // 
-            // pastHomeScore
-            // 
-            this.pastHomeScore.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.pastHomeScore.AutoSize = true;
-            this.pastHomeScore.Font = new System.Drawing.Font("Ink Free", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.pastHomeScore.Location = new System.Drawing.Point(368, 135);
-            this.pastHomeScore.Name = "pastHomeScore";
-            this.pastHomeScore.Size = new System.Drawing.Size(32, 36);
-            this.pastHomeScore.TabIndex = 3;
-            this.pastHomeScore.Text = "0";
-            // 
-            // liveGameAwayName
-            // 
-            this.liveGameAwayName.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.liveGameAwayName.AutoSize = true;
-            this.liveGameAwayName.Font = new System.Drawing.Font("Ink Free", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.liveGameAwayName.Location = new System.Drawing.Point(60, 74);
-            this.liveGameAwayName.Name = "liveGameAwayName";
-            this.liveGameAwayName.Size = new System.Drawing.Size(85, 36);
-            this.liveGameAwayName.TabIndex = 4;
-            this.liveGameAwayName.Text = "Away";
             // 
             // liveGameHomeName
             // 
@@ -694,16 +630,80 @@
             this.botH.TabIndex = 36;
             this.botH.Text = "0";
             // 
-            // liveGameTitle
+            // panel1
             // 
-            this.liveGameTitle.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.liveGameTitle.AutoSize = true;
-            this.liveGameTitle.Font = new System.Drawing.Font("Ink Free", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.liveGameTitle.Location = new System.Drawing.Point(41, 18);
-            this.liveGameTitle.Name = "liveGameTitle";
-            this.liveGameTitle.Size = new System.Drawing.Size(124, 20);
-            this.liveGameTitle.TabIndex = 37;
-            this.liveGameTitle.Text = "Top of the 1st";
+            this.panel1.Controls.Add(this.mainButtonLeft);
+            this.panel1.Controls.Add(this.mainButtonR);
+            this.panel1.Location = new System.Drawing.Point(687, 65);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(347, 100);
+            this.panel1.TabIndex = 5;
+            // 
+            // pastGameTable
+            // 
+            this.pastGameTable.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.pastGameTable.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.InsetDouble;
+            this.pastGameTable.ColumnCount = 2;
+            this.pastGameTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 83.05489F));
+            this.pastGameTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 16.94511F));
+            this.pastGameTable.Controls.Add(this.pastHomeScore, 1, 1);
+            this.pastGameTable.Controls.Add(this.pastAwayScore, 1, 0);
+            this.pastGameTable.Controls.Add(this.pastGameAway, 0, 0);
+            this.pastGameTable.Controls.Add(this.pastGameHome, 0, 1);
+            this.pastGameTable.Cursor = System.Windows.Forms.Cursors.Cross;
+            this.pastGameTable.Location = new System.Drawing.Point(12, 231);
+            this.pastGameTable.Name = "pastGameTable";
+            this.pastGameTable.RowCount = 2;
+            this.pastGameTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.pastGameTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.pastGameTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.pastGameTable.Size = new System.Drawing.Size(422, 206);
+            this.pastGameTable.TabIndex = 6;
+            this.pastGameTable.Visible = false;
+            // 
+            // pastHomeScore
+            // 
+            this.pastHomeScore.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.pastHomeScore.AutoSize = true;
+            this.pastHomeScore.Font = new System.Drawing.Font("Ink Free", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.pastHomeScore.Location = new System.Drawing.Point(368, 135);
+            this.pastHomeScore.Name = "pastHomeScore";
+            this.pastHomeScore.Size = new System.Drawing.Size(32, 36);
+            this.pastHomeScore.TabIndex = 3;
+            this.pastHomeScore.Text = "0";
+            // 
+            // pastAwayScore
+            // 
+            this.pastAwayScore.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.pastAwayScore.AutoSize = true;
+            this.pastAwayScore.Font = new System.Drawing.Font("Ink Free", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.pastAwayScore.Location = new System.Drawing.Point(368, 34);
+            this.pastAwayScore.Name = "pastAwayScore";
+            this.pastAwayScore.Size = new System.Drawing.Size(32, 36);
+            this.pastAwayScore.TabIndex = 2;
+            this.pastAwayScore.Text = "0";
+            // 
+            // pastGameAway
+            // 
+            this.pastGameAway.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.pastGameAway.AutoSize = true;
+            this.pastGameAway.Font = new System.Drawing.Font("Ink Free", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.pastGameAway.Location = new System.Drawing.Point(132, 34);
+            this.pastGameAway.Name = "pastGameAway";
+            this.pastGameAway.Size = new System.Drawing.Size(85, 36);
+            this.pastGameAway.TabIndex = 0;
+            this.pastGameAway.Text = "Away";
+            // 
+            // pastGameHome
+            // 
+            this.pastGameHome.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.pastGameHome.AutoSize = true;
+            this.pastGameHome.Font = new System.Drawing.Font("Ink Free", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.pastGameHome.Location = new System.Drawing.Point(131, 135);
+            this.pastGameHome.Name = "pastGameHome";
+            this.pastGameHome.Size = new System.Drawing.Size(86, 36);
+            this.pastGameHome.TabIndex = 1;
+            this.pastGameHome.Text = "Home";
             // 
             // Form1
             // 

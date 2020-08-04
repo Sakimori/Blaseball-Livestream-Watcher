@@ -78,6 +78,7 @@
             this.pastGameAway = new System.Windows.Forms.Label();
             this.pastGameHome = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
+            this.recordIndicator = new System.Windows.Forms.Label();
             this.liveGameTable.SuspendLayout();
             this.panel1.SuspendLayout();
             this.pastGameTable.SuspendLayout();
@@ -633,6 +634,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.recordIndicator);
             this.panel1.Controls.Add(this.button1);
             this.panel1.Controls.Add(this.mainButtonLeft);
             this.panel1.Controls.Add(this.mainButtonR);
@@ -718,6 +720,16 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
+            // recordIndicator
+            // 
+            this.recordIndicator.AutoSize = true;
+            this.recordIndicator.Location = new System.Drawing.Point(4, 26);
+            this.recordIndicator.Name = "recordIndicator";
+            this.recordIndicator.Size = new System.Drawing.Size(97, 13);
+            this.recordIndicator.TabIndex = 5;
+            this.recordIndicator.Text = "Waiting to record...";
+            this.recordIndicator.Visible = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -733,6 +745,7 @@
             this.liveGameTable.ResumeLayout(false);
             this.liveGameTable.PerformLayout();
             this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.pastGameTable.ResumeLayout(false);
             this.pastGameTable.PerformLayout();
             this.ResumeLayout(false);
@@ -791,6 +804,7 @@
         private System.Windows.Forms.Label botH;
         private System.Windows.Forms.Label liveGameTitle;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Label recordIndicator;
     }
 }
 

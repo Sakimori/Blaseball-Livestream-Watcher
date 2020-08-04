@@ -212,9 +212,9 @@ namespace Blaseball_Livestream
 
 
         //Threadsafe visibility setting for labesl
-        delegate void SetVisCallback(bool vis, Label label);
+        delegate void SetVisCallback(bool vis, Control label);
 
-        private void SetVis(bool vis, Label label)
+        private void SetVis(bool vis, Control label)
         {
             if (label.InvokeRequired)
             {
@@ -341,12 +341,10 @@ namespace Blaseball_Livestream
                 newGame.homeTeamNickname = gameUpdate.homeTeamNickname;
                 newGame.awayTeamNickname = gameUpdate.awayTeamNickname;
                 games.Add(newGame);
-                Debug.WriteLine(string.Concat("Adding game: ", newGame.awayTeamNickname));
-                Debug.WriteLine(games.Count.ToString());
                 thisGame = newGame;
             }
 
-            if(thisGame.lastUpdate == gameUpdate.lastUpdate) { Debug.WriteLine("No change"); return; } //Leave, nothing to do
+            if(thisGame.lastUpdate == gameUpdate.lastUpdate) { return; } //Leave, nothing to do
 
             Inning thisInning;
             thisGame.inningsList.Sort();
@@ -406,6 +404,7 @@ namespace Blaseball_Livestream
                 List<Game> games = serverDataList[0].schedule;
 
                 bool activeGame = !roundStarted;
+                bool indicatorFlipped = false;
                 foreach (Game game in serverDataList[0].schedule)
                 {                   
                     if (!game.gameComplete && !roundStarted) { roundStarted = true; } //mark round as started, start watching for all games completed
@@ -416,7 +415,7 @@ namespace Blaseball_Livestream
                     }
                 }
                 allCompleted = !activeGame;
-                if(currentWatchedGames.Count >= 1) { Debug.WriteLine(currentWatchedGames[0].homeTeamNickname); }
+                if(!indicatorFlipped && roundStarted) { SetText("Recording...", recordIndicator); indicatorFlipped = true; }
                 if (allCompleted) { waitHandle.Set(); }
 
 
@@ -437,7 +436,7 @@ namespace Blaseball_Livestream
                     serializer.Serialize(fileStream, currentWatchedGames);
                 }
             }
-            
+            SetVis(false, recordIndicator);
             MessageBox.Show("All games completed!");
         }
 
@@ -456,6 +455,9 @@ namespace Blaseball_Livestream
             fileDialog.OverwritePrompt = true;
             fileDialog.AddExtension = true;
             fileDialog.ShowDialog();
+
+            SetVis(true, recordIndicator);
+            SetText("Waiting to record...", recordIndicator);
 
             SaveAllGamesToFile(fileDialog);
         }

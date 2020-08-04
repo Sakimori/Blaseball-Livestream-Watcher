@@ -274,7 +274,7 @@ namespace Blaseball_Livestream
             if(newState.topOfInning != oldState.topOfInning)
             {
                 int inning = newState.inning;
-                if (newState.topOfInning && newState.inning < 8) { inning -= 1; }
+                if (newState.topOfInning && newState.inning <= 8) { inning -= 1; }
                 Label labelCheck = InningToLabel(inning, !newState.topOfInning);
                 SetTitle(newState.topOfInning, newState.inning);
                 SetVis(true, labelCheck);

@@ -106,11 +106,12 @@ namespace Blaseball_Livestream
                 }
             }
             if (liveGame == null) { Debug.WriteLine("Game from that team not found!"); return; }
-            RunGame(liveGame);
+            SaveGame liveSaveGame = new SaveGame();
+            RunGame(liveGame, liveSaveGame);
         }
 
 
-        private async void RunGame(Game gameArg)
+        private async void RunGame(Game gameArg, SaveGame liveSaveGame)
         {
             Uri uri = new Uri("https://blaseball.com");
 
@@ -124,7 +125,7 @@ namespace Blaseball_Livestream
                 {
                     if(game._id == lastGameState._id && game.lastUpdate != lastGameState.lastUpdate)
                     {
-                        UpdateGame(lastGameState, game);
+                        UpdateGame(lastGameState, game, liveSaveGame);
                         lastGameState = game;
                     }
                 }
@@ -149,6 +150,12 @@ namespace Blaseball_Livestream
             string[] titleList = { "Bottom", " of ", (gameArg.inning + 1).ToString() };
             if (gameArg.topOfInning) { titleList[0] = "Top"; }
             liveGameTitle.Text = string.Concat(titleList);
+            if (gameArg.gameComplete) 
+            { 
+                liveGameTitle.Text = "Final";
+                SetVis(true, InningToLabel(8, true));
+                SetVis(true, InningToLabel(8, false));
+            }
             liveGameAwayName.Text = gameArg.awayTeamNickname;
             liveGameHomeName.Text = gameArg.homeTeamNickname;
             int shift = 0;
@@ -161,6 +168,13 @@ namespace Blaseball_Livestream
             initScore.Visible = true;
             initScoreBot.Text = gameArg.homeScore.ToString();
             if (!gameArg.topOfInning & gameArg.inning == 0) { initScoreBot.Visible = true; }
+
+            //copy info from game in progress to saveable state
+            liveSaveGame.awayScore = gameArg.awayScore;
+            liveSaveGame.homeScore = gameArg.homeScore;
+            liveSaveGame.homeTeamNickname = gameArg.homeTeamNickname;
+            liveSaveGame.awayTeamNickname = gameArg.awayTeamNickname;
+            liveSaveGame._id = gameArg._id;
 
             //taskCompletionSource = new TaskCompletionSource<bool>();
             //await taskCompletionSource.Task;
@@ -207,21 +221,26 @@ namespace Blaseball_Livestream
             }
         }
 
-        private void UpdateGame(Game oldState, Game newState)
+        private void UpdateGame(Game oldState, Game newState, SaveGame saveGame)
         {
             int shift = 0;
             if(newState.inning >= 9 && newState.inning != oldState.inning) { SlideInnings(newState.inning); shift = newState.inning - 8; } //changes inning 9 to latest inning
 
 
 
-            //Check for hits
+            //Check for hits, add to save game counter
             Label hitLabel = null;
             foreach(string hitPhrase in hitPhrases)
             {
                 if (newState.lastUpdate.Contains(hitPhrase)) 
                 {
                     hitLabel = botH;
-                    if (newState.topOfInning) { hitLabel = topH; } 
+                    if (newState.topOfInning) 
+                    {
+                        saveGame.awayHits += 1;
+                        hitLabel = topH; 
+                    }
+                    else { saveGame.homeHits += 1; }
                 }
             }
 
@@ -239,6 +258,7 @@ namespace Blaseball_Livestream
                 SetVis(true, halfInningLabel);
                 //halfInningLabel.Visible = true;
                 SetText((Convert.ToInt16(halfInningLabel.Text)+newState.homeScore-oldState.homeScore).ToString(), halfInningLabel);
+                saveGame.homeScore = newState.homeScore;
             }
             if (newState.awayScore != oldState.awayScore)
             {
@@ -247,13 +267,14 @@ namespace Blaseball_Livestream
                 Label halfInningLabel = InningToLabel(newState.inning - shift, true);
                 SetVis(true, halfInningLabel);
                 SetText((Convert.ToInt16(halfInningLabel.Text) + newState.awayScore - oldState.awayScore).ToString(), halfInningLabel);
+                saveGame.awayScore = newState.awayScore;
             }
 
             //Display zero if inning changeover with no runs
-            if(newState.topOfInning != oldState.topOfInning && shift == 0)
+            if(newState.topOfInning != oldState.topOfInning)
             {
                 int inning = newState.inning;
-                if (newState.topOfInning) { inning -= 1; }
+                if (newState.topOfInning && newState.inning < 8) { inning -= 1; }
                 Label labelCheck = InningToLabel(inning, !newState.topOfInning);
                 SetTitle(newState.topOfInning, newState.inning);
                 SetVis(true, labelCheck);
@@ -263,8 +284,11 @@ namespace Blaseball_Livestream
             if (newState.gameComplete)
             {
                 SetText("Final", liveGameTitle);
-                SetVis(true, InningToLabel(9, true));
-                SetVis(true, InningToLabel(9, false));
+                SetVis(true, InningToLabel(8, true));
+                SetVis(true, InningToLabel(8, false));
+
+                //Run game save routine
+                SaveGameToFile(saveGame);
             }
         }
 
@@ -273,7 +297,7 @@ namespace Blaseball_Livestream
             Label[] labels = { InningToLabel(8, true), InningToLabel(8, false), label9 };
             SetText("0", labels[0]);
             SetText("0", labels[1]);
-            SetText(extraInnings.ToString(), labels[2]);
+            SetText((extraInnings+1).ToString(), labels[2]);
         }
 
         private Label InningToLabel(int inning, bool topOfInning)
@@ -281,7 +305,13 @@ namespace Blaseball_Livestream
             string front = "bot";
             if (topOfInning) { front = "top"; }
             inning += 1;
+            if(inning >= 10) { inning = 9; }
             return this.Controls.Find(string.Concat(front, inning.ToString()), true).FirstOrDefault() as Label;
+        }
+
+        private void SaveGameToFile(SaveGame game)
+        {
+
         }
     }
     class Client
@@ -371,6 +401,13 @@ namespace Blaseball_Livestream
         public bool gameComplete { get; set; }
         public int inning { get; set; }
         public bool topOfInning { get; set; }
+    }
+
+    public class SaveGame : Game
+    {
+        public List<Inning> inningsList { get; set; }
+        public int homeHits { get; set; }
+        public int awayHits { get; set; }
     }
 
     public class ServerData

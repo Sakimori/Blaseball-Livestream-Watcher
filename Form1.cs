@@ -64,14 +64,13 @@ namespace Blaseball_Livestream
 
         private void mainButtonLeft_Click(object sender, EventArgs e)
         {
-            if (fileLoaded) { LoadPastGames(); }
+            if (fileLoaded && listBox1.SelectedItem != null) { LoadPastGames(); }
         }
 
         private async void mainButtonR_Click(object sender, EventArgs e)
         {
             //taskCompletionSource?.TrySetResult(true);
             Team selected = listBox1.SelectedItem as Team;
-            pastGameTable.Visible = false;
             Game liveGame = null;
             List<Game> games = null;
             while (true)
@@ -485,6 +484,7 @@ namespace Blaseball_Livestream
                 return;
             }
 
+            SetVis(true, loadedIndicator);
             fileLoaded = true;
         }
 
@@ -526,15 +526,16 @@ namespace Blaseball_Livestream
             {
                 if (inning.number <= 8)
                 {
+
+
                     Label topLabel = InningToLabel(inning.number - 1, true);
                     Label botLabel = InningToLabel(inning.number - 1, false);
-                    Debug.WriteLine(string.Concat(topLabel.Name, " ", inning.awayScore.ToString()));
-                    topLabel.Text = inning.awayScore.ToString();
-                    Debug.WriteLine(topLabel.Text);
-                    //SetText(inning.awayScore.ToString(), topLabel);
-                    SetText(inning.homeScore.ToString(), topLabel);
                     SetVis(true, topLabel);
                     SetVis(true, botLabel);
+
+                    Debug.WriteLine(string.Concat(topLabel.Name, " ", inning.awayScore.ToString()));
+                    SetText(inning.awayScore.ToString(), topLabel);
+                    SetText(inning.homeScore.ToString(), botLabel);
                 }
             }
 

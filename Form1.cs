@@ -64,12 +64,13 @@ namespace Blaseball_Livestream
 
         private void mainButtonLeft_Click(object sender, EventArgs e)
         {
-            if (fileLoaded && listBox1.SelectedItem != null) { LoadPastGames(); }
+            if (fileLoaded && listBox1.SelectedItem != null) { ResetBox(); LoadPastGames(); }
         }
 
         private async void mainButtonR_Click(object sender, EventArgs e)
         {
             //taskCompletionSource?.TrySetResult(true);
+            ResetBox();
             Team selected = listBox1.SelectedItem as Team;
             Game liveGame = null;
             List<Game> games = null;
@@ -486,6 +487,25 @@ namespace Blaseball_Livestream
 
             SetVis(true, loadedIndicator);
             fileLoaded = true;
+        }
+
+        private void ResetBox()
+        {
+            IEnumerable<int> inningNums = Enumerable.Range(0, 9);
+            foreach (int num in inningNums)
+            {
+                Label top = InningToLabel(num, true);
+                Label bot = InningToLabel(num, false);
+                SetVis(false, top);
+                SetVis(false, bot);
+                SetText("0", top);
+                SetText("0", bot);
+            }
+
+            SetText("0", topR);
+            SetText("0", botR);
+            SetText("0", topH);
+            SetText("0", botH);
         }
 
         private void LoadPastGames()

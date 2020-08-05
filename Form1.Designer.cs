@@ -79,6 +79,8 @@
             this.pastGameHome = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.recordIndicator = new System.Windows.Forms.Label();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
             this.liveGameTable.SuspendLayout();
             this.panel1.SuspendLayout();
             this.pastGameTable.SuspendLayout();
@@ -89,7 +91,7 @@
             this.listBox1.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.listBox1.FormattingEnabled = true;
             this.listBox1.ItemHeight = 16;
-            this.listBox1.Location = new System.Drawing.Point(12, 65);
+            this.listBox1.Location = new System.Drawing.Point(12, 12);
             this.listBox1.Name = "listBox1";
             this.listBox1.Size = new System.Drawing.Size(669, 148);
             this.listBox1.TabIndex = 0;
@@ -98,18 +100,19 @@
             // mainButtonLeft
             // 
             this.mainButtonLeft.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.mainButtonLeft.Location = new System.Drawing.Point(0, 45);
+            this.mainButtonLeft.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.mainButtonLeft.Location = new System.Drawing.Point(0, 74);
             this.mainButtonLeft.Name = "mainButtonLeft";
             this.mainButtonLeft.Size = new System.Drawing.Size(165, 23);
             this.mainButtonLeft.TabIndex = 1;
-            this.mainButtonLeft.Text = "Load Past Game";
+            this.mainButtonLeft.Text = "Load Selected Team";
             this.mainButtonLeft.UseVisualStyleBackColor = true;
             this.mainButtonLeft.Click += new System.EventHandler(this.mainButtonLeft_Click);
             // 
             // mainButtonR
             // 
             this.mainButtonR.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.mainButtonR.Location = new System.Drawing.Point(182, 45);
+            this.mainButtonR.Location = new System.Drawing.Point(182, 74);
             this.mainButtonR.Name = "mainButtonR";
             this.mainButtonR.Size = new System.Drawing.Size(165, 23);
             this.mainButtonR.TabIndex = 3;
@@ -139,6 +142,7 @@
             this.liveGameTable.Controls.Add(this.liveGameAwayName, 0, 1);
             this.liveGameTable.Controls.Add(this.label1, 1, 0);
             this.liveGameTable.Controls.Add(this.label2, 2, 0);
+            this.liveGameTable.Controls.Add(this.top7, 7, 1);
             this.liveGameTable.Controls.Add(this.label3, 3, 0);
             this.liveGameTable.Controls.Add(this.label4, 4, 0);
             this.liveGameTable.Controls.Add(this.label5, 5, 0);
@@ -158,7 +162,6 @@
             this.liveGameTable.Controls.Add(this.top4, 4, 1);
             this.liveGameTable.Controls.Add(this.top5, 5, 1);
             this.liveGameTable.Controls.Add(this.top6, 6, 1);
-            this.liveGameTable.Controls.Add(this.top7, 7, 1);
             this.liveGameTable.Controls.Add(this.top8, 8, 1);
             this.liveGameTable.Controls.Add(this.top9, 9, 1);
             this.liveGameTable.Controls.Add(this.bot1, 1, 2);
@@ -175,7 +178,7 @@
             this.liveGameTable.Controls.Add(this.topH, 11, 1);
             this.liveGameTable.Controls.Add(this.botH, 11, 2);
             this.liveGameTable.Cursor = System.Windows.Forms.Cursors.Cross;
-            this.liveGameTable.Location = new System.Drawing.Point(258, 231);
+            this.liveGameTable.Location = new System.Drawing.Point(258, 178);
             this.liveGameTable.Name = "liveGameTable";
             this.liveGameTable.RowCount = 3;
             this.liveGameTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
@@ -634,11 +637,12 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.button2);
             this.panel1.Controls.Add(this.recordIndicator);
             this.panel1.Controls.Add(this.button1);
             this.panel1.Controls.Add(this.mainButtonLeft);
             this.panel1.Controls.Add(this.mainButtonR);
-            this.panel1.Location = new System.Drawing.Point(687, 65);
+            this.panel1.Location = new System.Drawing.Point(687, 12);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(347, 100);
             this.panel1.TabIndex = 5;
@@ -655,7 +659,7 @@
             this.pastGameTable.Controls.Add(this.pastGameAway, 0, 0);
             this.pastGameTable.Controls.Add(this.pastGameHome, 0, 1);
             this.pastGameTable.Cursor = System.Windows.Forms.Cursors.Cross;
-            this.pastGameTable.Location = new System.Drawing.Point(12, 231);
+            this.pastGameTable.Location = new System.Drawing.Point(35, 381);
             this.pastGameTable.Name = "pastGameTable";
             this.pastGameTable.RowCount = 2;
             this.pastGameTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
@@ -712,7 +716,7 @@
             // button1
             // 
             this.button1.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.button1.Location = new System.Drawing.Point(0, 74);
+            this.button1.Location = new System.Drawing.Point(182, 45);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(165, 23);
             this.button1.TabIndex = 4;
@@ -723,18 +727,42 @@
             // recordIndicator
             // 
             this.recordIndicator.AutoSize = true;
-            this.recordIndicator.Location = new System.Drawing.Point(4, 26);
+            this.recordIndicator.Location = new System.Drawing.Point(182, 29);
             this.recordIndicator.Name = "recordIndicator";
             this.recordIndicator.Size = new System.Drawing.Size(97, 13);
             this.recordIndicator.TabIndex = 5;
             this.recordIndicator.Text = "Waiting to record...";
             this.recordIndicator.Visible = false;
             // 
+            // button2
+            // 
+            this.button2.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.button2.Location = new System.Drawing.Point(0, 45);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(165, 23);
+            this.button2.TabIndex = 6;
+            this.button2.Text = "Load Past Games...";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // button3
+            // 
+            this.button3.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.button3.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.button3.Location = new System.Drawing.Point(778, 137);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(165, 23);
+            this.button3.TabIndex = 7;
+            this.button3.Text = "Load Selected Team";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1046, 450);
+            this.ClientSize = new System.Drawing.Size(1046, 395);
+            this.Controls.Add(this.button3);
             this.Controls.Add(this.pastGameTable);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.liveGameTable);
@@ -805,6 +833,8 @@
         private System.Windows.Forms.Label liveGameTitle;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label recordIndicator;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button3;
     }
 }
 

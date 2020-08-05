@@ -28,6 +28,10 @@ namespace Blaseball_Livestream
 
         List<SaveGame> currentWatchedGames = null;
 
+        bool fileLoaded = false;
+
+        List<SaveGame> loadedFile = null;
+
         //TaskCompletionSource<bool> taskCompletionSource = null;
 
         public Form1()
@@ -58,31 +62,9 @@ namespace Blaseball_Livestream
 
         }
 
-        private async void mainButtonLeft_Click(object sender, EventArgs e)
+        private void mainButtonLeft_Click(object sender, EventArgs e)
         {
-            //taskCompletionSource?.TrySetResult(true);
-            liveGameTable.Visible = false;
-            Game pastGame = null;
-            Team selected = listBox1.SelectedItem as Team;
-            List<Game> games = await formClient.GetSingleGamesUpdate();
-            foreach(Game game in games)
-            {
-                if(selected.fullName == game.awayTeamName || selected.fullName == game.homeTeamName)
-                {
-                    pastGame = game;
-                }
-            }
-            if(pastGame == null) { Debug.WriteLine("Game from that team not found!"); return; } //logs an error and halts routine
-            //if (!pastGame.gameComplete) 
-            //{ 
-            //    Debug.WriteLine("Game not over!");
-            //    return; 
-            //} //same as above
-            pastGameTable.Visible = true;
-            pastGameAway.Text = pastGame.awayTeamNickname;
-            pastGameHome.Text = pastGame.homeTeamNickname;
-            pastAwayScore.Text = pastGame.awayScore.ToString();
-            pastHomeScore.Text = pastGame.homeScore.ToString();
+            if (fileLoaded) { LoadPastGames(); }
         }
 
         private async void mainButtonR_Click(object sender, EventArgs e)
@@ -338,6 +320,7 @@ namespace Blaseball_Livestream
                 newGame.inningsList = new List<Inning>();
                 newGame.inningsList.Add(new Inning());
                 newGame.inningsList[0].number = gameUpdate.inning + 1;
+                newGame.topOfInning = true;
                 newGame.homeTeamNickname = gameUpdate.homeTeamNickname;
                 newGame.awayTeamNickname = gameUpdate.awayTeamNickname;
                 games.Add(newGame);
@@ -377,7 +360,7 @@ namespace Blaseball_Livestream
             if (homeScoreDiff > 0)
             {
                 thisGame.homeScore = gameUpdate.homeScore;
-                thisInning.homeScore += awayScoreDiff;
+                thisInning.homeScore += homeScoreDiff;
             }
             else if (awayScoreDiff > 0)
             {
@@ -416,7 +399,15 @@ namespace Blaseball_Livestream
                 }
                 allCompleted = !activeGame;
                 if(!indicatorFlipped && roundStarted) { SetText("Recording...", recordIndicator); indicatorFlipped = true; }
-                if (allCompleted) { waitHandle.Set(); }
+                if (allCompleted) 
+                { 
+                    foreach(SaveGame saveGame in currentWatchedGames)
+                    {
+                        saveGame.lastUpdate = "Game over.";
+                        saveGame.gameComplete = true;
+                    }
+                    waitHandle.Set(); 
+                }
 
 
             });
@@ -424,6 +415,8 @@ namespace Blaseball_Livestream
             await socket.ConnectAsync();
 
             waitHandle.WaitOne();
+
+            
 
             JsonSerializer serializer = new JsonSerializer(); 
 
@@ -460,6 +453,99 @@ namespace Blaseball_Livestream
             SetText("Waiting to record...", recordIndicator);
 
             SaveAllGamesToFile(fileDialog);
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            fileLoaded = false;
+            OpenFileDialog fileDialog = new OpenFileDialog();
+            fileDialog.Title = "Recorded Games File";
+            fileDialog.CheckFileExists = true;
+            fileDialog.ShowDialog();
+            bool loadedNow = false;
+
+            try
+            {
+                using (StreamReader file = File.OpenText(fileDialog.FileName))
+                {
+                    JsonSerializer serializer = new JsonSerializer();
+                    loadedFile = (List<SaveGame>)serializer.Deserialize(file, typeof(List<SaveGame>));
+                    loadedNow = true;
+                }
+            }
+            catch
+            {
+                MessageBox.Show("File could not be loaded!");
+                return;
+            }
+
+            if (!loadedNow)
+            {
+                MessageBox.Show("File could not be loaded!");
+                return;
+            }
+
+            fileLoaded = true;
+        }
+
+        private void LoadPastGames()
+        {
+            if (!fileLoaded) { MessageBox.Show("No file loaded!"); return; }
+
+            SaveGame thisGame = null;
+            Team selectedTeam = listBox1.SelectedItem as Team;
+            foreach (SaveGame game in loadedFile)
+            {
+                if (selectedTeam.nickname == game.awayTeamNickname || selectedTeam.nickname == game.homeTeamNickname)
+                {
+                    thisGame = game;
+                }
+            }
+
+            if (thisGame == null) { MessageBox.Show("Team not found in file!"); return; } //notify and leave if no game found
+
+            //set team names
+            SetVis(true, liveGameTable);
+            SetText(thisGame.awayTeamNickname, liveGameAwayName);
+            SetText(thisGame.homeTeamNickname, liveGameHomeName);
+            SetText(thisGame.awayScore.ToString(), topR);
+            SetText(thisGame.homeScore.ToString(), botR);
+            SetText("Past Game", liveGameTitle);
+
+            thisGame.inningsList.Sort();
+            if(thisGame.inningsList.Last().number > 8) //handle final inning, in case of extra innings
+            {
+                SetText(thisGame.inningsList.Last().awayScore.ToString(), top9);
+                SetText(thisGame.inningsList.Last().homeScore.ToString(), bot9);
+                SetText(thisGame.inningsList.Last().number.ToString(), label9);
+                SetVis(true, top9);
+                SetVis(true, bot9);
+            }
+
+            foreach (Inning inning in thisGame.inningsList) //handle rest of innings as normal
+            {
+                if (inning.number <= 8)
+                {
+                    Label topLabel = InningToLabel(inning.number - 1, true);
+                    Label botLabel = InningToLabel(inning.number - 1, false);
+                    Debug.WriteLine(string.Concat(topLabel.Name, " ", inning.awayScore.ToString()));
+                    topLabel.Text = inning.awayScore.ToString();
+                    Debug.WriteLine(topLabel.Text);
+                    //SetText(inning.awayScore.ToString(), topLabel);
+                    SetText(inning.homeScore.ToString(), topLabel);
+                    SetVis(true, topLabel);
+                    SetVis(true, botLabel);
+                }
+            }
+
+            //load hit numbers
+            SetText(thisGame.awayHits.ToString(), topH);
+            SetText(thisGame.homeHits.ToString(), botH);
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            Debug.WriteLine(top7.Text);
         }
     }
     class Client

@@ -45,6 +45,8 @@ namespace Blaseball_Livestream
 
     public class Inning : IComparable<Inning>
     {
+        public Inning() { }
+        public Inning(int num) { number = num; }
         public int number { get; set; }
         public int awayScore { get; set; }
         public int homeScore { get; set; }

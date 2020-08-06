@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Blaseball_Livestream
 {
-    abstract class Player
+    public class Player
     {
         public Player() { }
 
@@ -18,7 +18,7 @@ namespace Blaseball_Livestream
         public int walks { get; set; }
     }
 
-    class Batter : Player
+    public class Batter : Player
     {
         public Batter() { }
         public Batter(string id)
@@ -28,20 +28,21 @@ namespace Blaseball_Livestream
         public int plateAppearances { get; set; }
         public int atBats { get; set; }
         public int rbis { get; set; }
-        public Dictionary<OutTypes,int> outsTaken { get; set; }
+        public Dictionary<OutTypes, int> outsTaken { get; set; } = new Dictionary<OutTypes, int>();
         public int stolenBases { get; set; }
         public int caughtStealing { get; set; }
 
         //Adding outs will automatically track atbats and plate appearances
         public void AddOut(OutTypes outType)
         {
+            if (!outsTaken.ContainsKey(outType)) { outsTaken.Add(outType, 0); }
+
             outsTaken[outType] += 1;
             if(outType != OutTypes.CaughtStealing)
             {
                 plateAppearances += 1;
                 if(outType != OutTypes.Sacrifice) { atBats += 1; }
             }
-            outsTaken[outType] += 1;
         }
 
         public void AddHit()
@@ -60,7 +61,7 @@ namespace Blaseball_Livestream
         }
     }
 
-    class Pitcher : Player
+    public class Pitcher : Player
     {
         public Pitcher() { }
         public Pitcher(string id)
@@ -82,7 +83,7 @@ namespace Blaseball_Livestream
         }
     }
 
-    enum OutTypes
+    public enum OutTypes
     {
         Flyout,
         Groundout,

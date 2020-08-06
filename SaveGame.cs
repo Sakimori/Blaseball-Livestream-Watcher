@@ -297,7 +297,8 @@ namespace Blaseball_Livestream
                 {
                     batter = new Batter(lastBatter._id);
                     batter.name = lastBatter.name;
-                    awayPlayers.Add(batter);
+                    if(batter._id != null && batter._id != "") { awayPlayers.Add(batter); }
+                    
                 }
 
                 found = false;
@@ -314,7 +315,7 @@ namespace Blaseball_Livestream
                 {
                     pitcher = new Pitcher(lastPitcher._id);
                     pitcher.name = lastPitcher.name;
-                    homePlayers.Add(pitcher);
+                    if (pitcher._id != null && pitcher._id != "") { homePlayers.Add(pitcher); }
                 }
 
                 lastBatter = new Batter(newState.awayBatter);
@@ -338,7 +339,7 @@ namespace Blaseball_Livestream
                 {
                     batter = new Batter(lastBatter._id);
                     batter.name = lastBatter.name;
-                    homePlayers.Add(batter);
+                    if (batter._id != null && batter._id != "") { homePlayers.Add(batter); }
                 }
 
                 found = false;
@@ -355,7 +356,7 @@ namespace Blaseball_Livestream
                 {
                     pitcher = new Pitcher(lastPitcher._id);
                     pitcher.name = lastPitcher.name;
-                    awayPlayers.Add(pitcher);
+                    if (pitcher._id != null && pitcher._id != "") { awayPlayers.Add(pitcher); }
                 }
 
                 lastBatter = new Batter(newState.homeBatter);

@@ -104,6 +104,10 @@ namespace Blaseball_Livestream
 
             SocketIO socket = new SocketIO(uri);
             Game lastGameState = gameArg;
+            
+            // Under construction; uncomment to try it out
+            //GameEventParser parser = new GameEventParser();
+            //parser.StartNewGame(gameArg);
 
             socket.On("gameDataUpdate", (data) =>
             {
@@ -113,6 +117,9 @@ namespace Blaseball_Livestream
                     if(game._id == lastGameState._id && game.lastUpdate != lastGameState.lastUpdate)
                     {
                         UpdateGame(lastGameState, game, liveSaveGame);
+                        // Under construction
+                        //var result = parser.ParseGameUpdate(game);
+                        //Console.WriteLine(result);
                         lastGameState = game;
                     }
                 }
@@ -603,40 +610,7 @@ namespace Blaseball_Livestream
         }
     }
 
-    public class Team:IComparable<Team>
-    {
-        public string _id { get; set; }
-        public string fullName { get; set; }
-        public string nickname { get; set; }
-        public string mainColor { get; set; }
-        public string slogan { get; set; }
-        public string shorthand { get; set; }
-        public int CompareTo(Team other)
-        {
-            return nickname.CompareTo(other.nickname);
-        }
-        public override string ToString()
-        {
-            return String.Concat(new String[3] { fullName, " - ", slogan });
-        }
-    }
 
-    public class Game
-    {
-        public string _id { get; set; }
-        public string awayTeamName { get; set; }
-        public string awayTeamNickname { get; set; }
-        public string awayTeam { get; set; }
-        public string homeTeamName { get; set; }
-        public string homeTeamNickname { get; set; }
-        public string homeTeam { get; set; }
-        public int awayScore { get; set; }
-        public int homeScore { get; set; }
-        public string lastUpdate { get; set; }
-        public bool gameComplete { get; set; }
-        public int inning { get; set; }
-        public bool topOfInning { get; set; }
-    }
 
     public class SaveGame : Game
     {

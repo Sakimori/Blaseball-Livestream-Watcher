@@ -540,14 +540,14 @@ namespace Blaseball_Livestream
             ResetBox();
             if (!fileLoaded) { MessageBox.Show("No file loaded!"); return; }
 
-            List<SaveGame> thisTeamGames = null;
+            List<SaveGame> thisTeamGames = new List<SaveGame>();
             SaveGame thisGame;
             Team selectedTeam = listBox1.SelectedItem as Team;
             foreach (SaveGame game in loadedFile)
             {
                 if (selectedTeam.nickname == game.awayTeamNickname || selectedTeam.nickname == game.homeTeamNickname)
                 {
-                    if(game.inningsList.Count > 0) { thisTeamGames.Add(game); }
+                    thisTeamGames.Add(game);
                 }
             }
             if (thisTeamGames == null) { MessageBox.Show("Team not found in file!"); return; } //notify and leave if no game found

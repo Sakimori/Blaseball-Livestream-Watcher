@@ -392,6 +392,7 @@ namespace Blaseball_Livestream
                     }
 
                     pitcher.pitchCount += 1;
+                    pitcher.hits += 1;
                     if (hitString == "home run" || hitString == "grand slam") { batter.homeRuns += 1; pitcher.homeRuns += 1; }
 
                     if (lastTopOfInning) { awayHits += 1; }

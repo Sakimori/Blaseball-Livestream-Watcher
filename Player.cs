@@ -29,8 +29,6 @@ namespace Blaseball_Livestream
         public int atBats { get; set; }
         public int rbis { get; set; }
         public Dictionary<OutTypes, int> outsTaken { get; set; } = new Dictionary<OutTypes, int>();
-        public int stolenBases { get; set; }
-        public int caughtStealing { get; set; }
 
         //Adding outs will automatically track atbats and plate appearances
         public void AddOut(OutTypes outType)
@@ -71,9 +69,6 @@ namespace Blaseball_Livestream
         public float inningsPitched { get; set; }
         public int outsRecorded { get; set; }
         public int pitchCount { get; set; }
-        public int hitsOn2Outs { get; set; }
-        public int runsOn2Outs { get; set; }
-        public int runnersStranded { get; set; }
         public int strikeouts { get; set; }
 
         public void AddOut()

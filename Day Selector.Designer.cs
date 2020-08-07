@@ -39,12 +39,13 @@
             this.listBoxSelector.ItemHeight = 16;
             this.listBoxSelector.Location = new System.Drawing.Point(12, 12);
             this.listBoxSelector.Name = "listBoxSelector";
-            this.listBoxSelector.Size = new System.Drawing.Size(505, 228);
+            this.listBoxSelector.Size = new System.Drawing.Size(505, 372);
             this.listBoxSelector.TabIndex = 1;
+            this.listBoxSelector.SelectedIndexChanged += new System.EventHandler(this.listBoxSelector_SelectedIndexChanged);
             // 
             // OK
             // 
-            this.OK.Location = new System.Drawing.Point(224, 256);
+            this.OK.Location = new System.Drawing.Point(228, 391);
             this.OK.Name = "OK";
             this.OK.Size = new System.Drawing.Size(75, 23);
             this.OK.TabIndex = 2;
@@ -56,7 +57,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(529, 291);
+            this.ClientSize = new System.Drawing.Size(529, 426);
             this.Controls.Add(this.OK);
             this.Controls.Add(this.listBoxSelector);
             this.Name = "Day_Selector";

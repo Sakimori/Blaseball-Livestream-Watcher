@@ -22,12 +22,18 @@ namespace Blaseball_Livestream
             {
                 listBoxSelector.Items.Add(game);
             }
+            listBoxSelector.SetSelected(0, true);
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             selector.selectedGame = listBoxSelector.SelectedItem as SaveGame;
             if(selector.selectedGame != null) { Close(); }
+        }
+
+        private void listBoxSelector_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

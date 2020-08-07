@@ -55,6 +55,7 @@ namespace Blaseball_Livestream
             {
                 listBox1.Items.Add(t);
             }
+            listBox1.SetSelected(1, true);
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)

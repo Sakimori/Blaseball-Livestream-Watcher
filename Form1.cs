@@ -400,7 +400,7 @@ namespace Blaseball_Livestream
                 {                   
                     if (!game.gameComplete && !roundStarted) { roundStarted = true; } //mark round as started, start watching for all games completed
                     if (roundStarted && !activeGame) { activeGame = !game.gameComplete; } //if round has started and no active game found yet, set flag if this game is active
-                    if(!game.gameComplete) //if this game is currently active
+                    if(!game.gameComplete && roundStarted) //if this game is currently active and round as started, record thing
                     {
                         bool found = false;
                         foreach(SaveGame checkGame in currentWatchedGames)
@@ -412,8 +412,7 @@ namespace Blaseball_Livestream
                             }
                             if (!found)
                             {
-                                SaveGame newGame = new SaveGame(game);
-                                currentWatchedGames.Add(newGame);
+                                currentWatchedGames.Add(new SaveGame(game));
                             }
                         }
                         //UpdateWatchedGame(currentWatchedGames, game);
@@ -425,7 +424,6 @@ namespace Blaseball_Livestream
                 { 
                     foreach(SaveGame saveGame in currentWatchedGames)
                     {
-                        saveGame.lastUpdate = "Game over.";
                         saveGame.gameComplete = true;
                     }
                     waitHandle.Set(); 
@@ -438,7 +436,7 @@ namespace Blaseball_Livestream
 
             waitHandle.WaitOne();
 
-            
+            LoadFileToAppend(fileDialog.FileName, currentWatchedGames);
 
             JsonSerializer serializer = new JsonSerializer(); 
 
@@ -598,11 +596,6 @@ namespace Blaseball_Livestream
             SetText(thisGame.homeHits.ToString(), botH);
         }
 
-        private void button3_Click(object sender, EventArgs e)
-        {
-            Debug.WriteLine(top7.Text);
-        }
-
         private void button3_Click_1(object sender, EventArgs e)
         {
             OpenFileDialog fileDialog = new OpenFileDialog();
@@ -611,6 +604,7 @@ namespace Blaseball_Livestream
             fileDialog.DefaultExt = ".json";
             fileDialog.Filter = "Json files (*.json)|*.json|All files(*.*)|*.*";
             fileDialog.ShowDialog();
+
             string update;
 
             List<SaveGame> currentGames = new List<SaveGame>();
@@ -659,14 +653,50 @@ namespace Blaseball_Livestream
             savefileDialog.Title = "Save New File";
             savefileDialog.DefaultExt = "prestige";
             savefileDialog.Filter = "Visualizer files (*.prestige)|*.prestige|All files(*.*)|*.*";
-            savefileDialog.OverwritePrompt = true;
+            savefileDialog.OverwritePrompt = false;
             savefileDialog.AddExtension = true;
             savefileDialog.ShowDialog();
+
+            LoadFileToAppend(savefileDialog.FileName, currentGames);
 
             using (StreamWriter saveFile = File.CreateText(savefileDialog.FileName))
             {
                 JsonSerializer serializer = new JsonSerializer();
                 serializer.Serialize(saveFile, currentGames);
+            }
+        }
+
+        public void LoadFileToAppend(string fileName, List<SaveGame> toAppend)
+        {
+            List<SaveGame> oldFile = null;
+            if (File.Exists(fileName))
+            {
+                try
+                {
+                    using (StreamReader file = File.OpenText(fileName))
+                    {
+                        JsonSerializer serializer = new JsonSerializer();
+                        oldFile = (List<SaveGame>)serializer.Deserialize(file, typeof(List<SaveGame>));
+                    }
+
+                    foreach (SaveGame newGame in oldFile)
+                    {
+                        bool add = true;
+                        foreach (SaveGame oldGame in toAppend)
+                        {
+                            if (newGame._id == oldGame._id) { add = false; } //if game already exists, no dupes
+                        }
+                        if (add)
+                        {
+                            toAppend.Add(newGame);
+                        }
+                    }
+                }
+                catch
+                {
+                    MessageBox.Show("File not valid! Overwriting...");
+                    return;
+                }
             }
         }
     }

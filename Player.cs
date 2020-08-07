@@ -59,6 +59,36 @@ namespace Blaseball_Livestream
             atBats += 1;
             rbis += rbi;
         }
+
+        public float BattingAverage()
+        {
+            return (hits / atBats);
+        }
+
+        public float SluggingAverage()
+        {
+            int slgHits = hits - doubles - triples - homeRuns;
+            int numerator = slgHits + 2 * doubles + 3 * triples + 4 * homeRuns;
+            return (numerator / atBats);
+        }
+
+        public float OnBasePercentage()
+        {
+            int numerator = hits + walks;
+            int denominator = 1;
+            try
+            {
+                denominator = atBats + walks + outsTaken[OutTypes.Sacrifice];
+            }
+            catch { denominator = atBats + walks; }
+
+            return (numerator / denominator);
+        }
+
+        public float OnbasePlusSlugging()
+        {
+            return this.OnBasePercentage() + this.SluggingAverage();
+        }
     }
 
     public class Pitcher : Player

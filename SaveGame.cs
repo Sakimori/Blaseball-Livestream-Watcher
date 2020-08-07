@@ -20,6 +20,7 @@ namespace Blaseball_Livestream
             awayBatters = new List<Batter>();
             homeBatters = new List<Batter>();
             basesOccupied = new List<int>();
+            baseRunners = new List<string>();
         }
 
         //Constructor with only id
@@ -33,6 +34,7 @@ namespace Blaseball_Livestream
             awayBatters = new List<Batter>();
             homeBatters = new List<Batter>();
             basesOccupied = new List<int>();
+            baseRunners = new List<string>();
         }
 
         //Constructor with GameEvent. Initializes score.
@@ -45,6 +47,7 @@ namespace Blaseball_Livestream
             homePitchers = new List<Pitcher>();
             awayBatters = new List<Batter>();
             homeBatters = new List<Batter>();
+            baseRunners = new List<string>(); 
 
             if (gameEvent.topOfInning)
             {
@@ -79,6 +82,7 @@ namespace Blaseball_Livestream
             homePitchers = new List<Pitcher>();
             awayBatters = new List<Batter>();
             homeBatters = new List<Batter>();
+            baseRunners = new List<string>();
 
             if (gameEvent.topOfInning)
             {
@@ -120,6 +124,7 @@ namespace Blaseball_Livestream
             awayBatters = new List<Batter>();
             homeBatters = new List<Batter>();
             basesOccupied = new List<int>();
+            baseRunners = new List<string>();
 
             if (game.topOfInning)
             {
@@ -152,6 +157,8 @@ namespace Blaseball_Livestream
         public List<Inning> inningsList { get; set; }
         [JsonIgnore]
         public int lastInning { get; set; }
+        [JsonIgnore]
+        public List<string> baseRunners;
         public string awayTeamNickname { get; set; }
         public string awayTeamID { get; set; }
         public string homeTeamNickname { get; set; }
@@ -453,6 +460,9 @@ namespace Blaseball_Livestream
             //pitch with no interesting result
             if(thisUpdate.Contains("Ball.") || thisUpdate.Contains("Strike,") || thisUpdate.Contains("Foul Ball.")) { pitcher.pitchCount += 1; }
 
+            baseRunners = newState.baseRunners;
+            
+
             //steal attempt
             if(thisUpdate.Contains("caught stealing"))
             {
@@ -472,7 +482,7 @@ namespace Blaseball_Livestream
 
         public int CompareTo(SaveGame other)
         {
-            return day.CompareTo(other.day);
+            return (day + (season * 1000)).CompareTo(other.day + (season * 1000)); //sorts by S0DD in case a season goes over 99 games for any reason
         }
     }
 

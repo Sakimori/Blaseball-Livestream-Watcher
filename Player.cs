@@ -29,6 +29,8 @@ namespace Blaseball_Livestream
         public int atBats { get; set; }
         public int rbis { get; set; }
         public Dictionary<OutTypes, int> outsTaken { get; set; } = new Dictionary<OutTypes, int>();
+        public int doubles { get; set; }
+        public int triples { get; set; }
 
         //Adding outs will automatically track atbats and plate appearances
         public void AddOut(OutTypes outType)

@@ -11,6 +11,8 @@ namespace Blaseball_Livestream
     /// </summary>
     public class Game
     {
+        public List<int> basesOccupied { get; set; }
+        public List<string> baseRunners { get; set; }
         public string _id { get; set; }
         public string awayTeamName { get; set; }
         public string awayTeamNickname { get; set; }
@@ -30,8 +32,33 @@ namespace Blaseball_Livestream
         public int atBatBalls { get; set; }
         public int atBatStrikes { get; set; }
         public string homePitcher { get; set; }
+        public string homePitcherName { get; set; }
         public string awayPitcher { get; set; }
+        public string awayPitcherName { get; set; }
         public string homeBatter { get; set; }
+        public string homeBatterName { get; set; }
         public string awayBatter { get; set; }
+        public string awayBatterName { get; set; }
+        public int season { get; set; } = 0;
+        public int day { get; set; } = 0;
+    }
+
+    public class Inning : IComparable<Inning>
+    {
+        public Inning() { }
+        public Inning(int num) { number = num; }
+        public int number { get; set; }
+        public int awayScore { get; set; }
+        public int homeScore { get; set; }
+        public int CompareTo(Inning other)
+        {
+            return number.CompareTo(other.number);
+        }
+
+        public void AddRun(int runs, bool topOfInning)
+        {
+            if (topOfInning) { awayScore += runs; }
+            else { homeScore += runs; }
+        }
     }
 }

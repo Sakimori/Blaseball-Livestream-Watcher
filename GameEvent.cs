@@ -62,6 +62,7 @@ namespace Blaseball_Livestream
         public List<GameEventBaseRunner> baseRunners { get; set; }
         public bool isLastGameEvent { get; set; }
         public string additionalContext { get; set; }
+        public bool topOfInning { get; set; }
 
         public override string ToString()
         {

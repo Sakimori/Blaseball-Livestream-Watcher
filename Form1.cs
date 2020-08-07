@@ -26,11 +26,11 @@ namespace Blaseball_Livestream
 
         AutoResetEvent waitHandle = new AutoResetEvent(false);
 
-        List<SaveGame> currentWatchedGames = null;
-
         bool fileLoaded = false;
 
         List<SaveGame> loadedFile = null;
+
+        public SelectedGame selectedGame = new SelectedGame();
 
         //TaskCompletionSource<bool> taskCompletionSource = null;
 
@@ -39,19 +39,19 @@ namespace Blaseball_Livestream
             InitializeComponent();
         }
 
-        String[] hitPhrases = { "Single", "Double", "Triple", "home run" };
+        String[] hitPhrases = { "Single", "Double", "Triple", "home run", "grand slam" };
         private async void Form1_Load(object sender, EventArgs e)
         {
             formClient = new Client();
-            System.Threading.Thread.Sleep(1000);
+            Thread.Sleep(1000);
             List<Team> allTeams = await formClient.GetAllTeams();
-            while (allTeams == null) 
-            { 
-                System.Threading.Thread.Sleep(1000);
+            while (allTeams == null)
+            {
+                Thread.Sleep(1000);
                 allTeams = await formClient.GetAllTeams();
             }
             allTeams.Sort();
-            foreach(Team t in allTeams)
+            foreach (Team t in allTeams)
             {
                 listBox1.Items.Add(t);
             }
@@ -64,7 +64,7 @@ namespace Blaseball_Livestream
 
         private void mainButtonLeft_Click(object sender, EventArgs e)
         {
-            if (fileLoaded && listBox1.SelectedItem != null) { ResetBox(); LoadPastGames(); }
+            if (fileLoaded && listBox1.SelectedItem != null) { LoadPastGames(); }
         }
 
         private async void mainButtonR_Click(object sender, EventArgs e)
@@ -380,13 +380,14 @@ namespace Blaseball_Livestream
         }
         private async void SaveAllGamesToFile(SaveFileDialog fileDialog)
         {
+            List<SaveGame> currentWatchedGames = new List<SaveGame>();
+
             Uri uri = new Uri("https://blaseball.com");
 
             SocketIO socket = new SocketIO(uri);
 
             bool roundStarted = false;
             bool allCompleted = false;
-            currentWatchedGames = new List<SaveGame>();
 
             socket.On("gameDataUpdate", (data) =>
             {
@@ -401,7 +402,21 @@ namespace Blaseball_Livestream
                     if (roundStarted && !activeGame) { activeGame = !game.gameComplete; } //if round has started and no active game found yet, set flag if this game is active
                     if(!game.gameComplete) //if this game is currently active
                     {
-                        UpdateWatchedGame(currentWatchedGames, game);
+                        bool found = false;
+                        foreach(SaveGame checkGame in currentWatchedGames)
+                        {
+                            if (game._id == checkGame._id)
+                            {
+                                found = true;
+                                checkGame.UpdateSaveGame(game);
+                            }
+                            if (!found)
+                            {
+                                SaveGame newGame = new SaveGame(game);
+                                currentWatchedGames.Add(newGame);
+                            }
+                        }
+                        //UpdateWatchedGame(currentWatchedGames, game);
                     }
                 }
                 allCompleted = !activeGame;
@@ -451,10 +466,13 @@ namespace Blaseball_Livestream
         {
             SaveFileDialog fileDialog = new SaveFileDialog();
             fileDialog.Title = "Save New File";
-            fileDialog.DefaultExt = "json";
+            fileDialog.DefaultExt = "prestige";
+            fileDialog.Filter = "Visualizer files (*.prestige)|*.prestige|All files(*.*)|*.*";
             fileDialog.OverwritePrompt = true;
             fileDialog.AddExtension = true;
             fileDialog.ShowDialog();
+
+            if (fileDialog.FileName == "") { return; } //if no file selected, abort
 
             SetVis(true, recordIndicator);
             SetText("Waiting to record...", recordIndicator);
@@ -468,6 +486,8 @@ namespace Blaseball_Livestream
             OpenFileDialog fileDialog = new OpenFileDialog();
             fileDialog.Title = "Recorded Games File";
             fileDialog.CheckFileExists = true;
+            fileDialog.DefaultExt = ".prestige";
+            fileDialog.Filter = "Visualizer files (*.prestige)|*.prestige|All files(*.*)|*.*";
             fileDialog.ShowDialog();
             bool loadedNow = false;
 
@@ -517,19 +537,27 @@ namespace Blaseball_Livestream
 
         private void LoadPastGames()
         {
+            ResetBox();
             if (!fileLoaded) { MessageBox.Show("No file loaded!"); return; }
 
-            SaveGame thisGame = null;
+            List<SaveGame> thisTeamGames = new List<SaveGame>();
+            SaveGame thisGame;
             Team selectedTeam = listBox1.SelectedItem as Team;
             foreach (SaveGame game in loadedFile)
             {
                 if (selectedTeam.nickname == game.awayTeamNickname || selectedTeam.nickname == game.homeTeamNickname)
                 {
-                    thisGame = game;
+                    thisTeamGames.Add(game);
                 }
             }
-
-            if (thisGame == null) { MessageBox.Show("Team not found in file!"); return; } //notify and leave if no game found
+            if (thisTeamGames == null) { MessageBox.Show("Team not found in file!"); return; } //notify and leave if no game found
+            if(thisTeamGames.Count == 1) { thisGame = thisTeamGames[0]; }
+            else
+            {
+                Day_Selector selector = new Day_Selector(thisTeamGames, selectedGame);
+                selector.ShowDialog();
+                thisGame = selectedGame.selectedGame;
+            }
 
             //set team names
             SetVis(true, liveGameTable);
@@ -560,7 +588,6 @@ namespace Blaseball_Livestream
                     SetVis(true, topLabel);
                     SetVis(true, botLabel);
 
-                    Debug.WriteLine(string.Concat(topLabel.Name, " ", inning.awayScore.ToString()));
                     SetText(inning.awayScore.ToString(), topLabel);
                     SetText(inning.homeScore.ToString(), botLabel);
                 }
@@ -574,6 +601,73 @@ namespace Blaseball_Livestream
         private void button3_Click(object sender, EventArgs e)
         {
             Debug.WriteLine(top7.Text);
+        }
+
+        private void button3_Click_1(object sender, EventArgs e)
+        {
+            OpenFileDialog fileDialog = new OpenFileDialog();
+            fileDialog.Title = "SIBR Archive File";
+            fileDialog.CheckFileExists = true;
+            fileDialog.DefaultExt = ".json";
+            fileDialog.Filter = "Json files (*.json)|*.json|All files(*.*)|*.*";
+            fileDialog.ShowDialog();
+            string update;
+
+            List<SaveGame> currentGames = new List<SaveGame>();
+
+            try
+            {
+                bool exit = false;
+                StreamReader file = new StreamReader(fileDialog.OpenFile());
+                while ((update = file.ReadLine()) != null && !exit)
+                {
+                    List<Game> sched = JsonConvert.DeserializeObject<ServerData>(update).schedule;
+
+
+
+                    foreach (Game game in sched)
+                    {
+                        bool found = false;
+                        foreach (SaveGame saveGame in currentGames)
+                        {
+                            if (game._id == saveGame._id)
+                            {
+                                found = true;
+                                saveGame.UpdateSaveGame(game);
+                            }
+                        }
+                        if (!found)
+                        {
+                            SaveGame newGame = new SaveGame(game);
+                            currentGames.Add(newGame);
+                        }
+
+
+                    }
+
+
+
+                }
+            }
+            catch
+            {
+                MessageBox.Show("File could not be loaded!");
+                return;
+            }
+
+            SaveFileDialog savefileDialog = new SaveFileDialog();
+            savefileDialog.Title = "Save New File";
+            savefileDialog.DefaultExt = "prestige";
+            savefileDialog.Filter = "Visualizer files (*.prestige)|*.prestige|All files(*.*)|*.*";
+            savefileDialog.OverwritePrompt = true;
+            savefileDialog.AddExtension = true;
+            savefileDialog.ShowDialog();
+
+            using (StreamWriter saveFile = File.CreateText(savefileDialog.FileName))
+            {
+                JsonSerializer serializer = new JsonSerializer();
+                serializer.Serialize(saveFile, currentGames);
+            }
         }
     }
     class Client
@@ -625,33 +719,18 @@ namespace Blaseball_Livestream
             });
             
             await socket.ConnectAsync();
-            while(serverDataList == null) { System.Threading.Thread.Sleep(100); }
+            while(serverDataList == null) { Thread.Sleep(100); }
             return serverDataList[0].schedule;
         }
-    }
-
-
-
-    public class SaveGame : Game
-    {
-        public List<Inning> inningsList { get; set; }
-        public int homeHits { get; set; }
-        public int awayHits { get; set; }
     }
 
     public class ServerData
     {
         public List<Game> schedule { get; set; }
     }
-    public class Inning:IComparable<Inning>
+   
+    public class SelectedGame
     {
-        public int number { get; set; }
-        public int awayScore { get; set; }
-        public int homeScore { get; set; }
-        public int CompareTo(Inning other)
-        {
-            return number.CompareTo(other.number);
-        }
+        public SaveGame selectedGame { get; set; } = null;
     }
-
 }

@@ -19,8 +19,10 @@ namespace Blaseball_Livestream
         // State tracking for stats not tracked inherently in the state updates
         int m_eventIndex = 0;
         string m_currentBatter = null;
+        string m_currentBatterName = null;
         string m_currentBatterTeam = null;
         string m_currentPitcher = null;
+        string m_currentPitcherName = null;
         string m_currentPitcherTeam = null;
         int m_numFouls = 0;
 
@@ -29,8 +31,10 @@ namespace Blaseball_Livestream
             m_oldState = initState;
             m_eventIndex = 0;
             m_currentBatter = null;
+            m_currentBatterName = null;
             m_currentBatterTeam = null;
             m_currentPitcher = initState.awayPitcher;
+            m_currentPitcherName = initState.awayPitcherName;
             m_currentPitcherTeam = initState.awayTeam;
             m_numFouls = 0;
         }
@@ -178,5 +182,6 @@ namespace Blaseball_Livestream
             return currEvent;
         }
 
+        
     }
 }

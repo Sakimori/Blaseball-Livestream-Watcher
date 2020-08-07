@@ -149,8 +149,8 @@ namespace Blaseball_Livestream
 
 
         public string _id { get; set; }
-        [JsonProperty("inningsList")]
         public List<Inning> inningsList { get; set; }
+        [JsonIgnore]
         public int lastInning { get; set; }
         public string awayTeamNickname { get; set; }
         public string awayTeamID { get; set; }
@@ -160,17 +160,24 @@ namespace Blaseball_Livestream
         public int homeScore { get; set; }
         public int homeHits { get; set; }
         public int awayHits { get; set; }
+        [JsonIgnore]
         public string lastUpdate { get; set; }
+        [JsonIgnore]
         public string thisUpdate { get; set; }
         public bool gameComplete { get; set; }
+        [JsonIgnore]
         public bool topOfInning { get; set; }
+        [JsonIgnore]
         public bool lastTopOfInning { get; set; }
+        [JsonIgnore]
         public bool turnover { get; set; }
+        [JsonIgnore]
         public bool awayBatting { get; set; }
         public List<Batter> awayBatters { get; set; }
         public List<Batter> homeBatters { get; set; }
         public List<Pitcher> awayPitchers { get; set; }
         public List<Pitcher> homePitchers { get; set; }
+        [JsonIgnore]
         public List<int> basesOccupied { get; set; }
         public int homeRISP { get; set; }
         public int awayRISP { get; set; }
@@ -184,7 +191,9 @@ namespace Blaseball_Livestream
         public int homeCaughtStealing { get; set; }
         public int season { get; set; } = 0;
         public int day { get; set; } = 0;
+        [JsonIgnore]
         public Pitcher lastPitcher { get; set; }
+        [JsonIgnore]
         public Batter lastBatter { get; set; }
 
         public override string ToString()

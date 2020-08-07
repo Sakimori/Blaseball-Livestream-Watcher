@@ -707,7 +707,7 @@
             this.Controls.Add(this.liveGameTable);
             this.Controls.Add(this.listBox1);
             this.Name = "Form1";
-            this.Text = "SIBR Live Client: Shoe Thieves Edition 👟";
+            this.Text = "SIBR Live Client: Firefighters Edition 🔥";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.liveGameTable.ResumeLayout(false);
             this.liveGameTable.PerformLayout();

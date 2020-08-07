@@ -13,10 +13,11 @@ namespace Blaseball_Livestream
     public partial class Form2 : Form
     {
         SeasonDisplay selectedSeason;
-        public Form2(List<SaveGame> saveGames, int season)
+        public Form2(List<SaveGame> saveGames, SeasonDisplay selector)
         {
             InitializeComponent();
 
+            selectedSeason = selector;
             List<int> seasons = new List<int>();
             foreach(SaveGame game in saveGames)
             {
@@ -42,14 +43,14 @@ namespace Blaseball_Livestream
         }
     }
 
-    class SeasonDisplay : IComparable<SeasonDisplay>
+    public class SeasonDisplay : IComparable<SeasonDisplay>
     {
         public SeasonDisplay(int newIndex)
         {
             index = newIndex;
         }
 
-        int index;
+        public int index;
         public override string ToString()
         {
             if(index == -1) { return "All seasons."; }

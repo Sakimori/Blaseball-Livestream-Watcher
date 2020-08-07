@@ -102,11 +102,34 @@ namespace Blaseball_Livestream
         public int outsRecorded { get; set; }
         public int pitchCount { get; set; }
         public int strikeouts { get; set; }
+        public int runs { get; set; }
+        public int games { get; set; }
+        public int wins { get; set; }
+        public int losses { get; set; }
 
         public void AddOut()
         {
             pitchCount += 1;
             outsRecorded += 1;
+            IPCalc();
+        }
+
+        void IPCalc()
+        {
+            int partialInning = outsRecorded % 3;
+            inningsPitched = (outsRecorded - partialInning) + partialInning / 10; //this will give full innings, and then either .0, .1, or .2 
+        }
+
+        public float ERA()
+        {
+            return runs / (outsRecorded / 27);
+        }
+
+        public float WalksHitsperInningPitched()
+        {
+            int numerator = walks + hits;
+            float denominator = outsRecorded / 3;
+            return numerator / denominator;
         }
     }
 

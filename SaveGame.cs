@@ -408,6 +408,8 @@ namespace Blaseball_Livestream
             thisInning.AddRun(scoredAway, true);
             thisInning.AddRun(scoredHome, false);
 
+            pitcher.runs += scored; //they deserve it
+
 
             //check for hits
             foreach (string hitString in hitStrings)

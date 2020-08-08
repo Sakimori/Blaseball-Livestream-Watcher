@@ -15,10 +15,10 @@ namespace Blaseball_Livestream
         public SaveGame() 
         {
             inningsList = new List<Inning>();
-            awayPitchers = new List<Pitcher>();
-            homePitchers = new List<Pitcher>();
-            awayBatters = new List<Batter>();
-            homeBatters = new List<Batter>();
+            awayPitchers = new Dictionary<string, Pitcher>();
+            homePitchers = new Dictionary<string, Pitcher>();
+            awayBatters = new Dictionary<string, Batter>();
+            homeBatters = new Dictionary<string, Batter>();
             basesOccupied = new List<int>();
             baseRunners = new List<string>();
         }
@@ -29,10 +29,10 @@ namespace Blaseball_Livestream
             _id = idArg;
 
             inningsList = new List<Inning>();
-            awayPitchers = new List<Pitcher>();
-            homePitchers = new List<Pitcher>();
-            awayBatters = new List<Batter>();
-            homeBatters = new List<Batter>();
+            awayPitchers = new Dictionary<string, Pitcher>();
+            homePitchers = new Dictionary<string, Pitcher>();
+            awayBatters = new Dictionary<string, Batter>();
+            homeBatters = new Dictionary<string, Batter>();
             basesOccupied = new List<int>();
             baseRunners = new List<string>();
         }
@@ -43,22 +43,22 @@ namespace Blaseball_Livestream
             awayScore = (int)gameEvent.awayScore;
             homeScore = (int)gameEvent.homeScore;
 
-            awayPitchers = new List<Pitcher>();
-            homePitchers = new List<Pitcher>();
-            awayBatters = new List<Batter>();
-            homeBatters = new List<Batter>();
+            awayPitchers = new Dictionary<string, Pitcher>();
+            homePitchers = new Dictionary<string, Pitcher>();
+            awayBatters = new Dictionary<string, Batter>();
+            homeBatters = new Dictionary<string, Batter>();
             baseRunners = new List<string>(); 
 
             if (gameEvent.topOfInning)
             {
-                awayBatters.Add(new Batter(gameEvent.batterId));
-                homePitchers.Add(new Pitcher(gameEvent.pitcherId));
+                awayBatters.Add(gameEvent.batterId, new Batter(gameEvent.batterId));
+                homePitchers.Add(gameEvent.pitcherId, new Pitcher(gameEvent.pitcherId));
             }
 
             else
             {
-                awayPitchers.Add(new Pitcher(gameEvent.pitcherId));
-                homeBatters.Add(new Batter(gameEvent.batterId));
+                awayPitchers.Add(gameEvent.pitcherId, new Pitcher(gameEvent.pitcherId));
+                homeBatters.Add(gameEvent.batterId, new Batter(gameEvent.batterId));
             }
 
             lastPitcher = new Pitcher();
@@ -78,22 +78,22 @@ namespace Blaseball_Livestream
             awayScore = (int)gameEvent.awayScore;
             homeScore = (int)gameEvent.homeScore;
 
-            awayPitchers = new List<Pitcher>();
-            homePitchers = new List<Pitcher>();
-            awayBatters = new List<Batter>();
-            homeBatters = new List<Batter>();
+            awayPitchers = new Dictionary<string, Pitcher>();
+            homePitchers = new Dictionary<string, Pitcher>();
+            awayBatters = new Dictionary<string, Batter>();
+            homeBatters = new Dictionary<string, Batter>();
             baseRunners = new List<string>();
 
             if (gameEvent.topOfInning)
             {
-                awayBatters.Add(new Batter(gameEvent.batterId));
-                homePitchers.Add(new Pitcher(gameEvent.pitcherId));
+                awayBatters.Add(gameEvent.batterId, new Batter(gameEvent.batterId));
+                homePitchers.Add(gameEvent.pitcherId, new Pitcher(gameEvent.pitcherId));
             }
 
             else
             {
-                awayPitchers.Add(new Pitcher(gameEvent.pitcherId));
-                homeBatters.Add(new Batter(gameEvent.batterId));
+                awayPitchers.Add(gameEvent.pitcherId, new Pitcher(gameEvent.pitcherId));
+                homeBatters.Add(gameEvent.batterId, new Batter(gameEvent.batterId));
             }
 
             lastPitcher = new Pitcher();
@@ -119,34 +119,35 @@ namespace Blaseball_Livestream
             day = game.day;
 
             inningsList = new List<Inning>();
-            awayPitchers = new List<Pitcher>();
-            homePitchers = new List<Pitcher>();
-            awayBatters = new List<Batter>();
-            homeBatters = new List<Batter>();
+            awayPitchers = new Dictionary<string, Pitcher>();
+            homePitchers = new Dictionary<string, Pitcher>();
+            awayBatters = new Dictionary<string, Batter>();
+            homeBatters = new Dictionary<string, Batter>();
             basesOccupied = new List<int>();
             baseRunners = new List<string>();
+            if (game.awayBatter != "" && game.homeBatter != "")
+            { 
+                if (game.topOfInning && game.awayBatter != "" && game.homeBatter != "")
+                {
+                    lastBatter = new Batter(game.awayBatter);
+                    lastBatter.name = game.awayBatterName;
+                    awayBatters.Add(lastBatter._id, lastBatter);
 
-            if (game.topOfInning)
-            {
-                lastBatter = new Batter(game.awayBatter);
-                lastBatter.name = game.awayBatterName;
-                awayBatters.Add(lastBatter);
+                    lastPitcher = new Pitcher(game.homePitcher);
+                    lastPitcher.name = game.homePitcherName;
+                    homePitchers.Add(lastPitcher._id, lastPitcher);
+                }
+                else
+                {
+                    lastBatter = new Batter(game.homeBatter);
+                    lastBatter.name = game.homeBatterName;
+                    homeBatters.Add(lastBatter._id, lastBatter);
 
-                lastPitcher = new Pitcher(game.homePitcher);
-                lastPitcher.name = game.homePitcherName;
-                homePitchers.Add(lastPitcher);
+                    lastPitcher = new Pitcher(game.awayPitcher);
+                    lastPitcher.name = game.awayPitcherName;
+                    awayPitchers.Add(lastPitcher._id, lastPitcher);
+                }
             }
-            else
-            {
-                lastBatter = new Batter(game.homeBatter);
-                lastBatter.name = game.homeBatterName;
-                homeBatters.Add(lastBatter);
-
-                lastPitcher = new Pitcher(game.awayPitcher);
-                lastPitcher.name = game.awayPitcherName;
-                awayPitchers.Add(lastPitcher);
-            }
-
             awayBatting = true;
         }
 
@@ -180,10 +181,10 @@ namespace Blaseball_Livestream
         public bool turnover { get; set; }
         [JsonIgnore]
         public bool awayBatting { get; set; }
-        public List<Batter> awayBatters { get; set; }
-        public List<Batter> homeBatters { get; set; }
-        public List<Pitcher> awayPitchers { get; set; }
-        public List<Pitcher> homePitchers { get; set; }
+        public Dictionary<string,Batter> awayBatters { get; set; }
+        public Dictionary<string, Batter> homeBatters { get; set; }
+        public Dictionary<string,Pitcher> awayPitchers { get; set; }
+        public Dictionary<string, Pitcher> homePitchers { get; set; }
         [JsonIgnore]
         public List<int> basesOccupied { get; set; }
         public int homeRISP { get; set; }
@@ -199,9 +200,9 @@ namespace Blaseball_Livestream
         public int season { get; set; } = 0;
         public int day { get; set; } = 0;
         [JsonIgnore]
-        public Pitcher lastPitcher { get; set; }
+        public Pitcher lastPitcher { get; set; } = new Pitcher("");
         [JsonIgnore]
-        public Batter lastBatter { get; set; }
+        public Batter lastBatter { get; set; } = new Batter("");
 
         public override string ToString()
         {
@@ -231,10 +232,15 @@ namespace Blaseball_Livestream
 
             thisUpdate = newState.lastUpdate;
 
+            if (thisUpdate.Contains("Bottom of") || thisUpdate.Contains("Top of")) //nothing interesting happens here except putting players on the wrong team
+            {
+                return;
+            }
+
 
 
             //bookkeeping on day, in case it was init'd with GameEvent
-            if(season == 0) { season = newState.season; }
+            if (season == 0) { season = newState.season; }
             if(day == 0) { day = newState.day; }
 
             if(lastTopOfInning == newState.topOfInning && lastTopOfInning)
@@ -260,27 +266,6 @@ namespace Blaseball_Livestream
                 turnover = true;
             }
             else { turnover = false; }
-
-            if (thisUpdate.Contains("Bottom of") || thisUpdate.Contains("Top of"))
-            {
-                if (awayBatting)
-                {
-                    lastBatter = new Batter(newState.awayBatter);
-                    lastBatter.name = newState.awayBatterName;
-
-                    lastPitcher = new Pitcher(newState.homePitcher);
-                    lastPitcher.name = newState.homePitcherName;
-                }
-                else
-                {
-                    lastBatter = new Batter(newState.homeBatter);
-                    lastBatter.name = newState.homeBatterName;
-
-                    lastPitcher = new Pitcher(newState.awayPitcher);
-                    lastPitcher.name = newState.awayPitcherName;
-                }
-                return;
-            }
 
             Inning thisInning = null;
 
@@ -314,38 +299,20 @@ namespace Blaseball_Livestream
 
             if (awayBatting) 
             {
-                bool found = false;
-                foreach(Batter player in awayBatters)
-                {
-                    if(player._id == lastBatter._id)
-                    {
-                        batter = player;
-                        found = true;
-                    }
-                }
-                if (!found)
+                bool foundAB = awayBatters.TryGetValue(lastBatter._id, out batter);
+                if (!foundAB && lastBatter._id != "") 
                 {
                     batter = new Batter(lastBatter._id);
                     batter.name = lastBatter.name;
-                    if(batter._id != null && batter._id != "") { awayBatters.Add(batter); }
-                    
+                    awayBatters[batter._id] = batter;
                 }
 
-                found = false;
-
-                foreach (Pitcher player in homePitchers)
-                {
-                    if (player._id == lastPitcher._id)
-                    {
-                        pitcher = player;
-                        found = true;
-                    }
-                }
-                if (!found)
+                bool foundHP = homePitchers.TryGetValue(lastPitcher._id, out pitcher);
+                if (!foundHP && lastPitcher._id != "")
                 {
                     pitcher = new Pitcher(lastPitcher._id);
                     pitcher.name = lastPitcher.name;
-                    if (pitcher._id != null && pitcher._id != "") { homePitchers.Add(pitcher); }
+                    homePitchers[pitcher._id] = pitcher;
                 }
 
                 lastBatter = new Batter(newState.awayBatter);
@@ -356,37 +323,20 @@ namespace Blaseball_Livestream
             }
             else
             {
-                bool found = false;
-                foreach (Batter player in homeBatters)
-                {
-                    if (player._id == lastBatter._id)
-                    {
-                        batter = player;
-                        found = true;
-                    }
-                }
-                if (!found)
+                bool foundHB = homeBatters.TryGetValue(lastBatter._id, out batter);
+                if (!foundHB && lastBatter._id != "")
                 {
                     batter = new Batter(lastBatter._id);
                     batter.name = lastBatter.name;
-                    if (batter._id != null && batter._id != "") { homeBatters.Add(batter); }
+                    homeBatters[batter._id] = batter;
                 }
 
-                found = false;
-
-                foreach (Pitcher player in awayPitchers)
-                {
-                    if (player._id == lastPitcher._id)
-                    {
-                        pitcher = player as Pitcher;
-                        found = true;
-                    }
-                }
-                if (!found)
+                bool foundHP = awayPitchers.TryGetValue(lastPitcher._id, out pitcher);
+                if (!foundHP && lastPitcher._id != "")
                 {
                     pitcher = new Pitcher(lastPitcher._id);
                     pitcher.name = lastPitcher.name;
-                    if (pitcher._id != null && pitcher._id != "") { awayPitchers.Add(pitcher); }
+                    awayPitchers[pitcher._id] = pitcher;
                 }
 
                 lastBatter = new Batter(newState.homeBatter);
@@ -395,6 +345,9 @@ namespace Blaseball_Livestream
                 lastPitcher = new Pitcher(newState.awayPitcher);
                 lastPitcher.name = newState.awayPitcherName;
             }
+            
+            if (thisUpdate.Contains("batting for")) { return; } //not a scoring play, needed to get this far to set lastBatter
+            else if (batter == null || pitcher == null) { Debug.WriteLine("Null pitcher/batter!"); return; } //last play didn't have a batter or pitcher or both and it wasn't expected
             
 
 

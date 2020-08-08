@@ -484,7 +484,7 @@ namespace Blaseball_Livestream
 
         public int CompareTo(SaveGame other)
         {
-            return (day + (season * 1000)).CompareTo(other.day + (season * 1000)); //sorts by S0DD in case a season goes over 99 games for any reason
+            return (day + (season * 1000)).CompareTo(other.day + (other.season * 1000)); //sorts by S0DD in case a season goes over 99 games for any reason
         }
     }
 

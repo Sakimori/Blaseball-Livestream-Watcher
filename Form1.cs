@@ -411,12 +411,11 @@ namespace Blaseball_Livestream
                                 found = true;
                                 checkGame.UpdateSaveGame(game);
                             }
-                            if (!found)
-                            {
-                                currentWatchedGames.Add(new SaveGame(game));
-                            }
                         }
-                        //UpdateWatchedGame(currentWatchedGames, game);
+                        if (!found)
+                        {
+                            currentWatchedGames.Add(new SaveGame(game));
+                        }
                     }
                 }
                 allCompleted = !activeGame;

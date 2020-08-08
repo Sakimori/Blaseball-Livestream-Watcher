@@ -69,32 +69,32 @@ namespace Blaseball_Livestream
             rbis += rbi;
         }
 
-        public float BattingAverage()
+        public double BattingAverage()
         {
-            return (hits / atBats);
+            return Math.Round((float)hits / (float)atBats, 3);
         }
 
-        public float SluggingAverage()
+        public double SluggingAverage()
         {
-            int slgHits = hits - doubles - triples - homeRuns;
-            int numerator = slgHits + 2 * doubles + 3 * triples + 4 * homeRuns;
-            return (numerator / atBats);
+            float slgHits = hits - doubles - triples - homeRuns;
+            float numerator = slgHits + 2 * doubles + 3 * triples + 4 * homeRuns;
+            return Math.Round(numerator/(float)atBats, 3);
         }
 
-        public float OnBasePercentage()
+        public double OnBasePercentage()
         {
-            int numerator = hits + walks;
-            int denominator = 1;
+            float numerator = hits + walks;
+            float denominator = 1;
             try
             {
                 denominator = atBats + walks + outsTaken[OutTypes.Sacrifice];
             }
             catch { denominator = atBats + walks; }
 
-            return (numerator / denominator);
+            return Math.Round(numerator / denominator, 3);
         }
 
-        public float OnbasePlusSlugging()
+        public double OnbasePlusSlugging()
         {
             return this.OnBasePercentage() + this.SluggingAverage();
         }
@@ -156,16 +156,17 @@ namespace Blaseball_Livestream
             inningsPitched = ((float)outsRecorded - partialInning)/3 + (partialInning / 10); //this will give full innings, and then either .0, .1, or .2 
         }
 
-        public float ERA()
+        public double ERA()
         {
-            return runs / (outsRecorded / 27);
+            double denominator = (double)outsRecorded / (double)27;
+            return Math.Round(((double)runs / denominator), 2);
         }
 
-        public float WalksHitsperInningPitched()
+        public double WalksHitsperInningPitched()
         {
-            int numerator = walks + hits;
-            float denominator = outsRecorded / 3;
-            return (float)numerator / denominator;
+            double numerator = walks + hits;
+            double denominator = outsRecorded / 3;
+            return Math.Round((numerator / denominator), 3);
         }
 
         public void Collate(Pitcher newSelf)

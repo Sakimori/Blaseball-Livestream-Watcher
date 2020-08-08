@@ -723,16 +723,34 @@ namespace Blaseball_Livestream
             Form2 selector = new Form2(loadedFile, selectedSeason);
             selector.ShowDialog();
 
-            CollectStats(selectedTeam, selectedSeason.seasonDisplay.index, teamBatters, teamPitchers, teamStats);
+            int count = CollectStats(selectedTeam, selectedSeason.seasonDisplay.index, teamBatters, teamPitchers, teamStats);
+
+            string statRange = selectedSeason.seasonDisplay.ToString();
+
+            StatWindow statWindow = new StatWindow(selectedTeam, teamBatters, teamPitchers, teamStats, statRange, count);
+            statWindow.Show();
         }
 
-        private void CollectStats(Team team, int seasonNumber, Dictionary<string, Batter> teamBatters, Dictionary<string, Pitcher> teamPitchers, Dictionary<string, float> teamStats)
+        private int CollectStats(Team team, int seasonNumber, Dictionary<string, Batter> teamBatters, Dictionary<string, Pitcher> teamPitchers, Dictionary<string, float> teamStats)
         {
+            int count = 0;
             bool careAboutSeason = true;
-            if(seasonNumber == -1) { careAboutSeason = false; } //pass -1 to use all data
+            bool postSeason = false;
+            if (seasonNumber == -1) { careAboutSeason = false; } //pass -1 to use all data
+            else if (seasonNumber % 10000 != 0)
+            {
+                postSeason = true;
+                seasonNumber = (seasonNumber - (seasonNumber % 10000)) / 10000;
+            }
+            else { seasonNumber = seasonNumber / 10000; }
+
             foreach (SaveGame game in loadedFile)
             {
-                if (game.season == seasonNumber || !careAboutSeason)
+                bool useGame = false;
+                if (!careAboutSeason) { useGame = true; }
+                else if (game.season == seasonNumber && game.day < 99 && !postSeason) { useGame = true; }
+                else if (game.season == seasonNumber && game.day >= 99 && postSeason) { useGame = true; }
+                if (useGame)
                 {
                     if (game.awayTeamNickname == team.nickname)
                     {
@@ -755,6 +773,9 @@ namespace Blaseball_Livestream
                                 teamPitchers[thisInstance._id] = pitcher.Value;
                             }
                             teamPitchers[thisInstance._id].Collate(thisInstance);
+                            teamPitchers[thisInstance._id].games += 1;
+                            if (game.awayScore > game.homeScore) { teamPitchers[thisInstance._id].wins += 1; }
+                            else { teamPitchers[thisInstance._id].losses += 1; }
                         }
 
                         teamStats["Hits"] += game.awayHits;
@@ -764,6 +785,8 @@ namespace Blaseball_Livestream
                         teamStats["Hits On Two Outs"] += game.awayHitsOn2Out;
                         teamStats["Caught Stealing"] += game.awayCaughtStealing;
                         teamStats["Stolen Bases"] += game.awaySteals;
+
+                        count += 1;
                     }
                     else if (game.homeTeamNickname == team.nickname)
                     {
@@ -786,6 +809,9 @@ namespace Blaseball_Livestream
                                 teamPitchers[thisInstance._id] = pitcher.Value;
                             }
                             teamPitchers[thisInstance._id].Collate(thisInstance);
+                            teamPitchers[thisInstance._id].games += 1;
+                            if (game.awayScore < game.homeScore) { teamPitchers[thisInstance._id].wins += 1; }
+                            else { teamPitchers[thisInstance._id].losses += 1; }
                         }
 
                         teamStats["Hits"] += game.homeHits;
@@ -795,9 +821,12 @@ namespace Blaseball_Livestream
                         teamStats["Hits On Two Outs"] += game.homeHitsOn2Out;
                         teamStats["Caught Stealing"] += game.homeCaughtStealing;
                         teamStats["Stolen Bases"] += game.homeSteals;
+
+                        count += 1;
                     }
                 }
             }
+            return count;
         }
 
         private void liveGameTitle_Click(object sender, EventArgs e)

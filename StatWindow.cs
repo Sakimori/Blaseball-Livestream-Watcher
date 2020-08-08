@@ -102,7 +102,7 @@ namespace Blaseball_Livestream
 
             foreach(KeyValuePair<string, Pitcher> entry in pitchers)
             {
-                if (entry.Value.inningsPitched > 1)
+                if (entry.Value.inningsPitched > 3)
                 {
                     pitcherTable.RowCount += 1;
                     Label pitcherNameLabel = CreateTabelLabel(entry.Value.name);
@@ -110,7 +110,7 @@ namespace Blaseball_Livestream
                     pitcherTable.Controls.Add(pitcherNameLabel, 0, pitcherTable.RowCount);
                     pitcherTable.Controls.Add(CreateTabelLabel(entry.Value.games.ToString()), 1, pitcherTable.RowCount);
                     pitcherTable.Controls.Add(CreateTabelLabel(entry.Value.inningsPitched.ToString()), 2, pitcherTable.RowCount);
-                    pitcherTable.Controls.Add(CreateTabelLabel(entry.Value.ERA().ToString().PadRight(4, '0')), 3, pitcherTable.RowCount);
+                    pitcherTable.Controls.Add(CreateTabelLabel(entry.Value.ERA().ToString()), 3, pitcherTable.RowCount);
                     pitcherTable.Controls.Add(CreateTabelLabel(entry.Value.strikeouts.ToString()), 4, pitcherTable.RowCount);
                     pitcherTable.Controls.Add(CreateTabelLabel(entry.Value.WalksHitsperInningPitched().ToString().PadRight(5, '0')), 5, pitcherTable.RowCount);
                     pitcherTable.Controls.Add(CreateTabelLabel(entry.Value.wins.ToString()), 6, pitcherTable.RowCount);

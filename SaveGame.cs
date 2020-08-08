@@ -439,6 +439,49 @@ namespace Blaseball_Livestream
         {
             return (day + (season * 1000)).CompareTo(other.day + (other.season * 1000)); //sorts by S0DD in case a season goes over 99 games for any reason
         }
+
+        public void CleanSave() //Remove ghost players from wrong team
+        {
+            Dictionary<string, List<string>> toRemove = new Dictionary<string, List<string>>();
+            toRemove.Add("awayB", new List<string>());
+            toRemove.Add("homeB", new List<string>());
+            toRemove.Add("awayP", new List<string>());
+            toRemove.Add("homeP", new List<string>());
+
+            foreach (Batter batter in awayBatters.Values)
+            {
+                if(batter.plateAppearances == 0) { toRemove["awayB"].Add(batter._id); } 
+            }
+            foreach (Batter batter in homeBatters.Values)
+            {
+                if (batter.plateAppearances == 0) { toRemove["homeB"].Add(batter._id); }
+            }
+            foreach (Pitcher pitcher in awayPitchers.Values)
+            {
+                if (pitcher.pitchCount == 0) { toRemove["awayP"].Add(pitcher._id); }
+            }
+            foreach (Pitcher pitcher in homePitchers.Values)
+            {
+                if (pitcher.pitchCount == 0) { toRemove["homeP"].Add(pitcher._id); }
+            }
+
+            foreach(string zero in toRemove["awayB"])
+            {
+                awayBatters.Remove(zero);
+            }
+            foreach (string zero in toRemove["homeB"])
+            {
+                homeBatters.Remove(zero);
+            }
+            foreach (string zero in toRemove["awayP"])
+            {
+                awayPitchers.Remove(zero);
+            }
+            foreach (string zero in toRemove["homeP"])
+            {
+                homePitchers.Remove(zero);
+            }
+        }
     }
 
 

@@ -695,9 +695,9 @@ namespace Blaseball_Livestream
                 catch
                 {
                     MessageBox.Show("File not valid! Overwriting...");
-                    return;
                 }
             }
+            foreach (SaveGame game in toAppend) { game.CleanSave(); }
         }
 
         private void button4_Click(object sender, EventArgs e)

@@ -699,6 +699,11 @@ namespace Blaseball_Livestream
                 }
             }
         }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+
+        }
     }
     class Client
     {

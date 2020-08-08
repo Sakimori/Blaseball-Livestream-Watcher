@@ -116,8 +116,8 @@ namespace Blaseball_Livestream
 
         void IPCalc()
         {
-            int partialInning = outsRecorded % 3;
-            inningsPitched = (outsRecorded - partialInning) + partialInning / 10; //this will give full innings, and then either .0, .1, or .2 
+            float partialInning = outsRecorded % 3;
+            inningsPitched = ((float)outsRecorded - partialInning)/3 + (partialInning / 10); //this will give full innings, and then either .0, .1, or .2 
         }
 
         public float ERA()
@@ -129,7 +129,7 @@ namespace Blaseball_Livestream
         {
             int numerator = walks + hits;
             float denominator = outsRecorded / 3;
-            return numerator / denominator;
+            return (float)numerator / denominator;
         }
     }
 

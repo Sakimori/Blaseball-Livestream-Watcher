@@ -77,6 +77,7 @@
             this.recordIndicator = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
+            this.button4 = new System.Windows.Forms.Button();
             this.liveGameTable.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -689,7 +690,7 @@
             // 
             this.button3.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.button3.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.button3.Location = new System.Drawing.Point(687, 115);
+            this.button3.Location = new System.Drawing.Point(869, 115);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(165, 23);
             this.button3.TabIndex = 8;
@@ -697,11 +698,24 @@
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click_1);
             // 
+            // button4
+            // 
+            this.button4.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.button4.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.button4.Location = new System.Drawing.Point(687, 115);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(165, 23);
+            this.button4.TabIndex = 9;
+            this.button4.Text = "Load Team Stats";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1046, 395);
+            this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.liveGameTable);
@@ -768,6 +782,7 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Label loadedIndicator;
         private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button button4;
     }
 }
 

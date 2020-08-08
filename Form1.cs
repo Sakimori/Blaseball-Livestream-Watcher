@@ -566,7 +566,7 @@ namespace Blaseball_Livestream
             SetText(thisGame.homeTeamNickname, liveGameHomeName);
             SetText(thisGame.awayScore.ToString(), topR);
             SetText(thisGame.homeScore.ToString(), botR);
-            SetText("Past Game", liveGameTitle);
+            SetText(string.Concat("S ",(thisGame.season+1).ToString(),", Day ",(thisGame.day+1).ToString()), liveGameTitle);
 
             thisGame.inningsList.Sort();
             if(thisGame.inningsList.Last().number > 8) //handle final inning, in case of extra innings
@@ -798,6 +798,11 @@ namespace Blaseball_Livestream
                     }
                 }
             }
+        }
+
+        private void liveGameTitle_Click(object sender, EventArgs e)
+        {
+
         }
     }
     class Client

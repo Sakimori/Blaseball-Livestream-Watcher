@@ -194,17 +194,19 @@
             this.liveGameTitle.Size = new System.Drawing.Size(158, 25);
             this.liveGameTitle.TabIndex = 37;
             this.liveGameTitle.Text = "Top of the 1st";
+            this.liveGameTitle.Click += new System.EventHandler(this.liveGameTitle_Click);
             // 
             // liveGameAwayName
             // 
             this.liveGameAwayName.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.liveGameAwayName.AutoSize = true;
-            this.liveGameAwayName.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.liveGameAwayName.Location = new System.Drawing.Point(58, 75);
+            this.liveGameAwayName.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.liveGameAwayName.Location = new System.Drawing.Point(69, 79);
             this.liveGameAwayName.Name = "liveGameAwayName";
-            this.liveGameAwayName.Size = new System.Drawing.Size(90, 33);
+            this.liveGameAwayName.Size = new System.Drawing.Size(68, 25);
             this.liveGameAwayName.TabIndex = 4;
             this.liveGameAwayName.Text = "Away";
+            this.liveGameAwayName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label1
             // 
@@ -376,12 +378,13 @@
             // 
             this.liveGameHomeName.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.liveGameHomeName.AutoSize = true;
-            this.liveGameHomeName.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.liveGameHomeName.Location = new System.Drawing.Point(54, 150);
+            this.liveGameHomeName.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.liveGameHomeName.Location = new System.Drawing.Point(67, 154);
             this.liveGameHomeName.Name = "liveGameHomeName";
-            this.liveGameHomeName.Size = new System.Drawing.Size(97, 33);
+            this.liveGameHomeName.Size = new System.Drawing.Size(72, 25);
             this.liveGameHomeName.TabIndex = 14;
             this.liveGameHomeName.Text = "Home";
+            this.liveGameHomeName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // top1
             // 

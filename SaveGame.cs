@@ -198,6 +198,14 @@ namespace Blaseball_Livestream
         public int homeSteals { get; set; }
         public int homeCaughtStealing { get; set; }
         public int season { get; set; } = 0;
+        public int seasonTracked //season will be S0000, posteason will be S5DDD
+        {
+            get
+            {
+                if(day <= 98) { return (season * 10000); }
+                else { return ((season * 10000) + 5000); }
+            }
+        }
         public int day { get; set; } = 0;
         [JsonIgnore]
         public Pitcher lastPitcher { get; set; } = new Pitcher("");
@@ -206,7 +214,8 @@ namespace Blaseball_Livestream
 
         public override string ToString()
         {
-            return string.Concat(awayTeamNickname, " @ ", homeTeamNickname, ", Season ", (season+1).ToString(), " Day ", (day+1).ToString());
+            if (day <= 98) { return string.Concat(awayTeamNickname, " @ ", homeTeamNickname, ", Season ", (season + 1).ToString(), " Day ", (day + 1).ToString()); }
+            else { return string.Concat(awayTeamNickname, " @ ", homeTeamNickname, ", Postseason ", (season + 1).ToString(), " Day ", (day - 98).ToString()); }
         }
 
         //Update a savegame with a game event
@@ -437,7 +446,7 @@ namespace Blaseball_Livestream
 
         public int CompareTo(SaveGame other)
         {
-            return (day + (season * 1000)).CompareTo(other.day + (other.season * 1000)); //sorts by S0DD in case a season goes over 99 games for any reason
+            return ((seasonTracked+day).CompareTo(other.seasonTracked+other.day)); //sorts by SSDDD 
         }
 
         public void CleanSave() //Remove ghost players from wrong team

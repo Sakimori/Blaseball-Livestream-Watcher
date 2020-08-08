@@ -34,10 +34,12 @@
             // 
             // listBoxSeasons
             // 
+            this.listBoxSeasons.Font = new System.Drawing.Font("Courier New", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.listBoxSeasons.FormattingEnabled = true;
+            this.listBoxSeasons.ItemHeight = 17;
             this.listBoxSeasons.Location = new System.Drawing.Point(13, 13);
             this.listBoxSeasons.Name = "listBoxSeasons";
-            this.listBoxSeasons.Size = new System.Drawing.Size(589, 95);
+            this.listBoxSeasons.Size = new System.Drawing.Size(589, 89);
             this.listBoxSeasons.TabIndex = 0;
             this.listBoxSeasons.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
             // 
@@ -59,7 +61,7 @@
             this.Controls.Add(this.SeasonAccept);
             this.Controls.Add(this.listBoxSeasons);
             this.Name = "Form2";
-            this.Text = "Form2";
+            this.Text = "Time Range";
             this.ResumeLayout(false);
 
         }

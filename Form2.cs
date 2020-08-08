@@ -12,8 +12,8 @@ namespace Blaseball_Livestream
 {
     public partial class Form2 : Form
     {
-        SeasonDisplay selectedSeason;
-        public Form2(List<SaveGame> saveGames, SeasonDisplay selector)
+        SelectedSeason selectedSeason;
+        public Form2(List<SaveGame> saveGames, SelectedSeason selector)
         {
             InitializeComponent();
 
@@ -38,8 +38,8 @@ namespace Blaseball_Livestream
 
         private void SeasonAccept_Click(object sender, EventArgs e)
         {
-            selectedSeason = listBoxSeasons.SelectedItem as SeasonDisplay;
-            Close();
+            selectedSeason.seasonDisplay = listBoxSeasons.SelectedItem as SeasonDisplay;
+            if (selectedSeason.seasonDisplay != null) { Close(); }
         }
     }
 
@@ -53,7 +53,7 @@ namespace Blaseball_Livestream
         public int index;
         public override string ToString()
         {
-            if(index == -1) { return "All seasons."; }
+            if(index == -1) { return "All seasons"; }
             return string.Concat("Season ", (index+1).ToString());
         }
 

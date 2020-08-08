@@ -346,8 +346,8 @@ namespace Blaseball_Livestream
                 lastPitcher.name = newState.awayPitcherName;
             }
             
-            if (thisUpdate.Contains("batting for")) { return; } //not a scoring play, needed to get this far to set lastBatter
-            else if (batter == null || pitcher == null) { Debug.WriteLine("Null pitcher/batter!"); return; } //last play didn't have a batter or pitcher or both and it wasn't expected
+            if (thisUpdate.Contains("batting for")) { return; } //not a play of record, needed to get this far to set lastBatter
+            else if (batter == null || pitcher == null) { return; } //last play didn't have a batter or pitcher or both
             
 
 

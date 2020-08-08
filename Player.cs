@@ -28,7 +28,16 @@ namespace Blaseball_Livestream
         public int plateAppearances { get; set; }
         public int atBats { get; set; }
         public int rbis { get; set; }
-        public Dictionary<OutTypes, int> outsTaken { get; set; } = new Dictionary<OutTypes, int>();
+        public Dictionary<OutTypes, int> outsTaken { get; set; } = new Dictionary<OutTypes, int>()
+        {
+            {OutTypes.Flyout, 0},
+            {OutTypes.Groundout, 0},
+            {OutTypes.Sacrifice, 0},
+            {OutTypes.Strikeout, 0},
+            {OutTypes.DoublePlay, 0},
+            {OutTypes.CaughtStealing, 0},
+            {OutTypes.FieldersChoice, 0}
+        };
         public int doubles { get; set; }
         public int triples { get; set; }
 
@@ -89,6 +98,33 @@ namespace Blaseball_Livestream
         {
             return this.OnBasePercentage() + this.SluggingAverage();
         }
+
+        public void Collate(Batter newSelf)
+        {
+            if(_id != newSelf._id) { return; } //not same person
+            plateAppearances += newSelf.plateAppearances;
+            atBats += newSelf.atBats;
+            rbis += newSelf.rbis;
+            hits += newSelf.hits;
+            homeRuns += newSelf.homeRuns;
+            walks += newSelf.walks;
+            doubles += newSelf.doubles;
+            triples += newSelf.triples;
+
+            outsTaken[OutTypes.CaughtStealing] += newSelf.outsTaken[OutTypes.CaughtStealing];
+            outsTaken[OutTypes.DoublePlay] += newSelf.outsTaken[OutTypes.DoublePlay];
+            outsTaken[OutTypes.FieldersChoice] += newSelf.outsTaken[OutTypes.FieldersChoice];
+            outsTaken[OutTypes.Flyout] += newSelf.outsTaken[OutTypes.Flyout];
+            outsTaken[OutTypes.Groundout] += newSelf.outsTaken[OutTypes.Groundout];
+            outsTaken[OutTypes.Sacrifice] += newSelf.outsTaken[OutTypes.Sacrifice];
+            outsTaken[OutTypes.Strikeout] += newSelf.outsTaken[OutTypes.Strikeout];
+            //foreach(KeyValuePair<OutTypes, int> outCount in newSelf.outsTaken)
+            //{
+            //    if (!outsTaken.ContainsKey(outCount.Key)) { outsTaken.Add(outCount.Key, 0); }
+
+            //    outsTaken[outCount.Key] += outCount.Value;
+            //}
+        }
     }
 
     public class Pitcher : Player
@@ -130,6 +166,22 @@ namespace Blaseball_Livestream
             int numerator = walks + hits;
             float denominator = outsRecorded / 3;
             return (float)numerator / denominator;
+        }
+
+        public void Collate(Pitcher newSelf)
+        {
+            if (_id != newSelf._id) { return; } //not same person
+            hits += newSelf.hits;
+            homeRuns += newSelf.homeRuns;
+            walks += newSelf.walks;
+            outsRecorded += newSelf.outsRecorded;
+            IPCalc();
+            pitchCount += newSelf.pitchCount;
+            strikeouts += newSelf.strikeouts;
+            runs += newSelf.runs;
+            games += newSelf.games;
+            wins += newSelf.wins;
+            losses += newSelf.losses;
         }
     }
 

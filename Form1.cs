@@ -32,6 +32,8 @@ namespace Blaseball_Livestream
 
         public SelectedGame selectedGame = new SelectedGame();
 
+        public SelectedSeason selectedSeason = new SelectedSeason();
+
         //TaskCompletionSource<bool> taskCompletionSource = null;
 
         public Form1()
@@ -55,7 +57,7 @@ namespace Blaseball_Livestream
             {
                 listBox1.Items.Add(t);
             }
-            listBox1.SetSelected(1, true);
+            listBox1.SetSelected(0, true);
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -555,6 +557,7 @@ namespace Blaseball_Livestream
                 Day_Selector selector = new Day_Selector(thisTeamGames, selectedGame);
                 selector.ShowDialog();
                 thisGame = selectedGame.selectedGame;
+                selector.Dispose();
             }
 
             //set team names
@@ -702,7 +705,99 @@ namespace Blaseball_Livestream
 
         private void button4_Click(object sender, EventArgs e)
         {
+            if (!fileLoaded) { return; } //do nothing without a file
+            Dictionary<string, Batter> teamBatters = new Dictionary<string, Batter>();
+            Dictionary<string, Pitcher> teamPitchers = new Dictionary<string, Pitcher>();
+            Dictionary<string, float> teamStats = new Dictionary<string, float>()
+            {
+                {"Hits", 0},
+                {"Runs", 0},
+                {"RISP", 0},
+                {"Runs On Two Outs", 0},
+                {"Hits On Two Outs", 0},
+                {"Caught Stealing", 0},
+                {"Stolen Bases", 0}
+            };
+            Team selectedTeam = listBox1.SelectedItem as Team;
 
+            Form2 selector = new Form2(loadedFile, selectedSeason);
+            selector.ShowDialog();
+
+            CollectStats(selectedTeam, selectedSeason.seasonDisplay.index, teamBatters, teamPitchers, teamStats);
+        }
+
+        private void CollectStats(Team team, int seasonNumber, Dictionary<string, Batter> teamBatters, Dictionary<string, Pitcher> teamPitchers, Dictionary<string, float> teamStats)
+        {
+            bool careAboutSeason = true;
+            if(seasonNumber == -1) { careAboutSeason = false; } //pass -1 to use all data
+            foreach (SaveGame game in loadedFile)
+            {
+                if (game.season == seasonNumber || !careAboutSeason)
+                {
+                    if (game.awayTeamNickname == team.nickname)
+                    {
+                        foreach (KeyValuePair<string, Batter> batter in game.awayBatters)
+                        {
+                            Batter thisInstance = batter.Value;
+                            bool found = teamBatters.ContainsKey(thisInstance._id);
+                            if (!found)
+                            {
+                                teamBatters[thisInstance._id] = batter.Value;
+                            }
+                            teamBatters[thisInstance._id].Collate(thisInstance);
+                        }
+                        foreach (KeyValuePair<string, Pitcher> pitcher in game.awayPitchers)
+                        {
+                            Pitcher thisInstance = pitcher.Value;
+                            bool found = teamPitchers.ContainsKey(thisInstance._id);
+                            if (!found)
+                            {
+                                teamPitchers[thisInstance._id] = pitcher.Value;
+                            }
+                            teamPitchers[thisInstance._id].Collate(thisInstance);
+                        }
+
+                        teamStats["Hits"] += game.awayHits;
+                        teamStats["Runs"] += game.awayScore;
+                        teamStats["RISP"] += game.awayRISP;
+                        teamStats["Runs On Two Outs"] += game.awayRunsOn2Out;
+                        teamStats["Hits On Two Outs"] += game.awayHitsOn2Out;
+                        teamStats["Caught Stealing"] += game.awayCaughtStealing;
+                        teamStats["Stolen Bases"] += game.awaySteals;
+                    }
+                    else if (game.homeTeamNickname == team.nickname)
+                    {
+                        foreach (KeyValuePair<string, Batter> batter in game.homeBatters)
+                        {
+                            Batter thisInstance = batter.Value;
+                            bool found = teamBatters.ContainsKey(thisInstance._id);
+                            if (!found)
+                            {
+                                teamBatters[thisInstance._id] = batter.Value;
+                            }
+                            teamBatters[thisInstance._id].Collate(thisInstance);
+                        }
+                        foreach (KeyValuePair<string, Pitcher> pitcher in game.homePitchers)
+                        {
+                            Pitcher thisInstance = pitcher.Value;
+                            bool found = teamPitchers.ContainsKey(thisInstance._id);
+                            if (!found)
+                            {
+                                teamPitchers[thisInstance._id] = pitcher.Value;
+                            }
+                            teamPitchers[thisInstance._id].Collate(thisInstance);
+                        }
+
+                        teamStats["Hits"] += game.homeHits;
+                        teamStats["Runs"] += game.homeScore;
+                        teamStats["RISP"] += game.homeRISP;
+                        teamStats["Runs On Two Outs"] += game.homeRunsOn2Out;
+                        teamStats["Hits On Two Outs"] += game.homeHitsOn2Out;
+                        teamStats["Caught Stealing"] += game.homeCaughtStealing;
+                        teamStats["Stolen Bases"] += game.homeSteals;
+                    }
+                }
+            }
         }
     }
     class Client
@@ -767,5 +862,10 @@ namespace Blaseball_Livestream
     public class SelectedGame
     {
         public SaveGame selectedGame { get; set; } = null;
+    }
+
+    public class SelectedSeason
+    {
+        public SeasonDisplay seasonDisplay { get; set; } = null;
     }
 }
